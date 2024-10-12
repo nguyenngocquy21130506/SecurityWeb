@@ -1,0 +1,17 @@
+#secondImgDiv img {
+    height: 70px;
+    margin-right: 15px;
+    display: inline-block;
+}
+
+
+
+.btn-send {
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    width: 80%;
+}
+input[type="file"] {
+    display: block;
+}

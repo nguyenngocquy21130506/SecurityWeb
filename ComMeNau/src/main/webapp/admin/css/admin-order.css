@@ -1,0 +1,107 @@
+.page-content{
+    padding: 40px 0;
+}
+.page-content .content{
+    width: calc(100% - 80px);
+    height: auto;
+    margin : 0 40px;
+    border: 1px solid #cecece;
+    display: inline-block;
+}
+
+.content .status{
+    width: 100%;
+    height: auto;
+}
+.content .status .date{
+    color: white;
+    letter-spacing: .4px;
+    word-spacing: .5px;
+    background-color: rgb(67, 142, 185);
+    height: auto;
+    padding: 20px;
+}
+.content .status .date i{
+    color: #333;
+    font-size: 15px;
+}  
+.content .status .checkline{
+    padding: 20px;
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: space-between;
+}
+.content .status .checkline .sub-status{
+    width: 30%;
+    height: auto;
+    display: flex;
+}
+.content .status .checkline .sub-status p{
+    margin-left: 15px;
+}
+.content .status .checkline .sub-status i{
+    font-size: 22px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.content .status .checkline .sub-status .circle{
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #cecccc;
+    position: relative;
+}
+.content .status .checkline .sub-status .status-content{
+    width: 80%;
+}
+
+.content .operation,
+.content .information{
+    height: auto;
+    margin: 20px;
+    border: 0.5px solid #cecece;
+}
+.content .information{
+    float: left;
+    width: 72%;
+}
+.content .information tr.head{
+    border-bottom: 2px solid #333;
+}
+.content .information td{
+    padding: 10px;
+    line-height: 1.8;
+}
+.content .information tr.item{
+    height: 60px;
+    border-bottom: 1px solid #cecece;
+}
+
+.content .operation{
+    float: right;
+    width: 20%;
+    padding: 20px;
+}
+.content .operation select{
+    width: 100%;
+    padding: 5px;
+}
+.content .operation button{
+    width: 100%;
+    margin-top: 20px;
+    background-color: black;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+}
+.content .operation button:hover{
+    background-color: #333;
+}
+
+.f-right{
+    float: right;
+    text-align: right;
+}

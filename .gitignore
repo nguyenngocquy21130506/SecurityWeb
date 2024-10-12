@@ -1,0 +1,11 @@
+target/
+.idea/
+# Compiled class file
+*.class
+
+# Log file
+*.log
+*.iml
+
+# image file
+ComMeNau/src/main/webapp/images/

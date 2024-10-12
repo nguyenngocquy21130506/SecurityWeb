@@ -1,0 +1,132 @@
+.u-s-p-y-90 {
+    padding-top: 5.625rem;
+    padding-bottom: 5.625rem;
+}
+.detail-post {
+    max-width: 90%;
+    padding: 0 15px;
+    margin: 0 auto;
+}
+.bp-detail-image{
+    width: 100%;
+}
+.bp-detail__stat{
+    margin: 6px 0;
+}
+.bp-detail__stat-wrap{
+    margin-right: 22px;
+}
+.bp-detail__stat-wrap  a {
+    font-size: 12px;
+    font-weight: 600;
+}
+.bp-detail__author > a {
+    color: #ff4500!important;
+    text-decoration: overline!important;
+}
+
+.bp-detail__h1 {
+    display: block;
+    margin-bottom: 6px;
+}
+.bp-detail__h1 > a {
+    font-size: 20px;
+    font-weight: 600;
+    color: #333333;
+}
+
+.bp-detail__p {
+    margin-bottom: 16px;
+    color: #333333;
+    font-size: 18px;
+    line-height: 2;
+}
+.bp-detail__p a {
+    font-weight: 700;
+    color: #ff4500;
+
+}
+.bp-detail__postnp {
+    margin: 1.375rem 0;
+}
+.bp-detail__postnp a {
+    font-size: 13px;
+    font-weight: 600;
+    color: #333333;
+}
+.bp-detail__postnp a:hover {
+    font-weight: 700;
+    color: #ff4500;
+}
+.d-meta__text {
+    display: block;
+    color: #333333;
+    font-size: 32px;
+    font-weight: 700;
+}
+.text-silver{
+    font-size: 13px;
+    font-weight: 600;
+    color: #ff4500 !important;
+    text-decoration: overline!important;
+}
+.u-s-m-b-36 {
+    margin-bottom: 2.25rem;
+}
+
+.d-meta__p-comment {
+    
+    display: flex;
+    margin-bottom: 2rem;
+}
+.p-comment__wrap1{
+  
+        margin-right: 20px;
+}
+.p-comment__wrap2{
+    display: flex;
+    flex-direction: column;
+}
+.p-comment__author {
+    display: block;
+    margin-bottom: 2px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333333;
+}
+.p-comment__timestamp {
+    display: block;
+    margin-bottom: 2px;
+}
+.p-comment__timestamp a {
+    font-size: 12px;
+    font-weight: 600;
+    color: #7f7f7f;
+   
+}
+.p-comment__reply {
+    font-size: 13px;
+    font-weight: 600;
+    color: #ff4500;
+    border-bottom: 0;
+}
+.d-meta__text-2 {
+    display: block;
+    color: #333333;
+    font-size: 18px;
+    font-weight: 600;
+}
+.d-meta__text-3 {
+    display: block;
+    color: #7f7f7f;
+    font-size: 12px;
+}
+.btn--e-brand-shadow {
+    border: 1px solid #ff4500;
+    box-shadow: 1px 2px 8px 0 rgba(36, 37, 38, 0.08);
+    background-color: #ff4500;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+   
+}

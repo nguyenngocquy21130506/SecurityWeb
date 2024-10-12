@@ -1,0 +1,96 @@
+.dash-edit-p {
+    width: 100%;
+}
+
+.gl-dob,
+.gl-inline {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+
+.gl-inline div {
+    -ms-flex: 1;
+    flex: 1;
+    margin-right: 14px;
+}
+
+.gl-label {
+    margin-bottom: 8px;
+    display: block;
+    color: #333333;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.dash-edit-p .input-text {
+    width: 100%;
+}
+
+.dash-edit-p .btn,
+.dash-edit-p .input-text,
+.dash-edit-p .select-box {
+    border-radius: 6px;
+}
+
+.input-text--primary-style {
+    color: #333333;
+    transition: all 0.6s linear;
+    border: 2px solid transparent;
+    background-color: #f1f1f1;
+}
+
+.input-text {
+    font-size: 12px;
+    background-clip: padding-box;
+    padding: 0 18px;
+    height: 40px;
+}
+
+.gl-inline div:last-child {
+    margin-right: 0;
+}
+
+.select-box--primary-style {
+    color: #333333;
+    border: 2px solid transparent;
+    background-color: #f1f1f1;
+}
+
+.select-box {
+    display: block;
+    max-width: 100%;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px 12px 11px 15px;
+    cursor: pointer;
+    line-height: 1.2;
+}
+
+.gl-dob .select-box {
+    flex: 1;
+    margin-right: 8px;
+}
+
+.dash__link--secondary>a {
+    color: #333333;
+}
+
+.dash__link>a {
+    font-size: 13px;
+    font-weight: 600;
+    transition: color 0.5s linear;
+}
+.dash__link>a:hover {
+    color: #ff4500;
+}
+.btn--e-brand-b-2:hover{
+    background-color: inherit !important;
+    color: #ff4500 !important;
+    border: 2px solid #ff4500 !important;
+}
+.btn-submit{
+    background-color: #ff4500;
+    padding: 7px 17px;
+    border-radius: 10px;
+}

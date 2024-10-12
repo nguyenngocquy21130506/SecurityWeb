@@ -1,0 +1,22 @@
+.empty__big-text {
+    display: block;
+    margin-bottom: 12px;
+    color: #ff4500;
+    line-height: 1;
+    font-size: 85px;
+    font-weight: 600;
+}
+.empty__text-1 {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #333333;
+}
+.empty__redirect-link {
+    border-radius: 40px;
+    padding: 16px;
+    display: inline-block;
+    font-weight: 600;
+    font-size: 13px;
+}

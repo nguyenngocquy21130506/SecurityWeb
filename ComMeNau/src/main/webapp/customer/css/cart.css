@@ -1,0 +1,335 @@
+.u-s-p-b-60 {
+    padding-bottom: 3.75rem;
+}
+
+.section__intro,
+.section__content {
+    position: relative;
+}
+
+.container {
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left: -15px;
+}
+
+.section__text-wrap {
+    padding: 60px 0;
+    text-align: center;
+}
+
+.u-c-secondary {
+    color: #333333 !important;
+}
+
+.u-s-m-b-30 {
+    margin-bottom: 1.875rem;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+.table-p {
+    width: 100%;
+    border: 1px solid #eee;
+    border-collapse: collapse;
+}
+
+.table-p tr {
+    position: relative;
+    border-top: 1px solid #eee;
+}
+
+.table-p td {
+    padding: 20px;
+}
+
+.table-p__box {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+
+.table-p__img-wrap {
+    display: inline-block;
+    vertical-align: middle;
+    width: 120px;
+    height: 120px;
+}
+
+.table-p__img-wrap img {
+    display: block;
+    min-width: 120px;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+    height: 100px;
+}
+
+.u-img-fluid {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+}
+
+.table-p__info {
+    margin-left: 18px;
+}
+
+.table-p__name {
+    display: block;
+}
+
+.table-p__name>a {
+    color: #333333;
+    font-size: 14px;
+    font-weight: 600;
+    transition: color 0.5s;
+}
+
+.table-p__category>a {
+    color: #a0a0a0;
+    transition: color 0.5s;
+    font-size: 12px;
+}
+
+.table-p__variant-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.table-p__variant-list>li>span {
+    color: #a0a0a0;
+    font-size: 12px;
+}
+
+.table-p__price {
+    text-align: center;
+    display: block;
+    color: #333333;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.table-p__input-counter-wrap {
+    text-align: center;
+}
+
+.input-counter {
+    position: relative;
+    display: inline-block;
+    max-width: 132px;
+    min-width: 132px;
+}
+
+.input-counter__minus,
+.input-counter__plus {
+    top: 0;
+    display: inline-block;
+    font-size: 10px;
+    cursor: pointer;
+    position: absolute;
+    width: 50px;
+    line-height: 50px;
+    height: 100%;
+    text-align: center;
+    color: #7f7f7f;
+    transition: color 0.5s;
+}
+
+.input-counter__minus {
+    left: 0;
+}
+
+.input-counter--text-primary-style {
+    color: #333333;
+    transition: all 0.6s linear;
+    border: 2px solid transparent;
+    background-color: #f1f1f1;
+}
+
+.input-counter__text {
+    border-radius: 25px;
+    display: block;
+    width: 100%;
+    height: 50px;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.input-counter__plus {
+    right: 0;
+}
+
+.table-p__delete-link {
+    padding: 10px;
+    font-size: 16px;
+    display: inline-block;
+    color: #333333;
+    transition: color 0.5s;
+    border: none;
+    background: none;
+}
+.table-p__delete-link:hover {
+    color: #ff4500;
+}
+.route-box {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    background-color: #f1f1f1;
+    justify-content: space-between;
+}
+
+.route-box__link {
+    color: #333333;
+    font-size: 13px;
+    text-align: center;
+    padding: 17px;
+    font-weight: 600;
+    display: inline-block;
+    transition: color 0.5s;
+    border: none;
+}
+button.route-box__link:hover {
+    color: #ff4500;
+}
+.route-box i {
+    margin-right: 2px;
+}
+
+.f-cart__pad-box {
+    border: 1px solid #eee;
+    padding: 32px 22px 35px;
+}
+
+.f-cart__table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.f-cart__table td {
+    color: #333333;
+    vertical-align: middle;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 0;
+}
+
+.f-cart__table td:first-child {
+    text-align: left;
+}
+
+.f-cart__table tr:last-child td {
+    font-size: 16px;
+    font-weight: 700;
+    color: #ff4500;
+}
+
+.f-cart .btn {
+    padding: 16px;
+    font-weight: 600;
+    font-size: 13px;
+    border-radius: 6px;
+    width: 100%;
+}
+
+.btn--e-brand-b-2 {
+    color: #ffffff;
+    background-color: #ff4500;
+    border: 2px solid #ff4500;
+    /*transition: background-color 0.5s ease-in, border-color 0.5s ease-in;*/
+}
+.btn--e-brand-b-2:hover {
+    color: #ffffff !important;
+    background-color: #ff4500 !important;
+    border: 2px solid #ff4500 !important;
+    opacity: 0.7 !important;
+}
+a:hover {
+    color: #ff4500;
+}
+.section__cartItemSearch{
+    display: flex;
+    align-items: end;
+    border-radius: 10px;
+}
+.section__cartItemSearch .searchBox {
+    border-radius: 10px;
+}
+.section__cartItemSearch .searchButton {
+    border-radius: 10px;
+    background-color: #ff4500;
+}
+.table-p__del-wrap input.checkVoucher:hover{
+    cursor: pointer;
+}
+.table-p__del-wrap input.checkVoucher{
+    height: 100px;
+    width: 20px;
+}
+/* Detail Cart Item */
+.detail_cartItem--popup {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+.popup-content{
+    display: flex;
+}
+.detCartItem--img{
+    flex: 0 0 auto; /* Ảnh sẽ không co dãn */
+    margin-right: 10px; /* Khoảng cách giữa ảnh và nội dung */
+}
+.detCartItem--info{
+    flex: 1;
+    display: flex;
+ }
+
+.opacity_bgk0 {
+    display: none;
+    position: absolute;
+    z-index: 1010;
+    padding-top: 100px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+    transition: 0.3s all ease-in-out;
+}
+.opacity_bgk0 .infBoard {
+    background: rgba(0, 0, 0, 0.5);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin: auto;
+    padding: 20px;
+    padding-top: 30px;
+    border-radius: 15px;
+    width: 500px;
+    box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.5);
+    transition: 0.3s all ease-in-out;
+}

@@ -1,0 +1,134 @@
+
+* body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.section__intro .section__heading {
+    font-weight: 600;
+    letter-spacing: -.02rem;
+    font-size: 28px;
+    text-align: center;
+}
+.l-s {
+    letter-spacing: 1px;
+}
+.m-b-15 {
+    margin-bottom: 0.9375rem;
+}
+
+.m-b-60 {
+    margin-bottom: 3.75rem;
+}
+.m-b-6 {
+    margin-bottom: 0.5rem;
+}
+.m-b-30 {
+    margin-bottom: 1.875rem;
+}
+
+.m-t-50 {
+    margin-top: 3.125rem;
+}
+
+.w-100 {
+    width: 100%;
+}
+.m-r-8 {
+    margin-right: 1rem;
+}
+.form-inline {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    justify-content: space-between;
+}
+.form-inline div {
+    flex: 1;
+}
+.l-f-o {
+    border: 1px solid #eee;
+}
+
+.l-f-o__pad-box {
+    padding: 20px;
+}
+
+.l-f-o__form {
+    width: 100%;
+}
+
+.gl-h1 {
+    color: #333333;
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+
+.gl-label {
+    margin-bottom: 8px;
+    display: block;
+    color: #333333;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.l-f-o .input-text,
+.l-f-o .btn,
+.l-f-o .select-box {
+    border-radius: 6px;
+}
+
+.l-f-o .input-text {
+    width: 100%;
+}
+
+.input-text {
+    font-size: 12px;
+    background-clip: padding-box;
+    padding: 0 18px;
+    height: 40px;
+    transition: 0.1s ease;
+}
+
+.input-text:focus {
+    outline-color: #fa4400;
+}
+
+.input-text--primary-style {
+    color: #333333;
+    transition: all 0.6s linear;
+    border: 2px solid transparent;
+    background-color: #f1f1f1;
+}
+
+.btn--e-transparent-brand-b-2 {
+    color: #ff4500;
+    border: 2px solid #ff4500;
+    background-color: transparent;
+    transition: border-color .5s ease-in;
+}
+
+.btn--e-transparent-brand-b-2:hover {
+    border-color: #fa4400;
+    background-color: #ff4500;
+    color: #fff;
+}
+
+.gl-link {
+    font-size: 13px;
+    font-weight: 600;
+    color: #ff4500;
+    transition: color 0.5s linear;
+    margin: 20px;
+}
+
+.gl-link:hover {
+    opacity: 0.7;
+}
+
+
+
+.btn-submit {
+    padding: 15px 20px;
+}

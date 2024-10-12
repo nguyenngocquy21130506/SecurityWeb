@@ -1,0 +1,9 @@
+#simple-table tbody td.category-col {
+    padding: 0px !important;
+}
+
+#simple-table .category-col input {
+    width: 100%;
+    border: none;
+    padding: 13px 10px;
+}

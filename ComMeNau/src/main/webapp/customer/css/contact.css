@@ -1,0 +1,140 @@
+* body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.p-b-60 {
+    padding-bottom: 3.75rem;
+}
+.p-t-60 {
+    padding-top: 3.75rem;
+}
+
+.u-h-100 {
+    height: 100%;
+}
+
+.m-b-30 {
+    margin-bottom: 1.875rem;
+}
+
+.pd-1 {
+    padding: 0 1rem;
+}
+
+.contact-o {
+    background-color: #ffffff;
+    padding: 23px; border: 2px solid #f5f5f5;
+    box-shadow: 0 6px 15px 0 rgba(36, 37, 38, 0.08);
+}
+
+.contact-o__wrap {
+    text-align: center;
+}
+
+.contact-o__icon {
+    margin-bottom: 10px;
+}
+
+.contact-o__icon>i {
+    color: #ff4500;
+    font-size: 48px;
+}
+
+.contact-o__info-text-1 {
+    display: block;
+    font-size: 17px;
+    margin-bottom: 4px;
+    color: #333333;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.contact-o__info-text-2 {
+    font-size: 12px;
+    margin-bottom: 2px;
+    display: block;
+    color: #7f7f7f;
+}
+
+.col-lg-12 {
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    /*text-align: center;*/
+}
+
+.contact-area__heading {
+    margin-bottom: 30px;
+    display: inline-block;
+    font-size: 26px;
+    font-weight: 700;
+    color: #333333;
+    background-color: #ffffff;
+}
+
+.contact-f {
+    width: 100%;
+}
+
+.contact-f .input-text,
+.contact-f .text-area {
+    border-radius: 6px;
+    width: 100%;
+}
+
+.contact-f .text-area {
+    height: 185px;
+    padding: 18px;
+}
+
+.contact-f .btn {
+    padding: 19px 21px;
+    border-radius: 25px;
+}
+
+.input-text--border-radius {
+    border-radius: 25px;
+}
+
+.input-text--primary-style {
+    color: #333333;
+    transition: all 0.6s linear;
+    border: 2px solid transparent;
+    background-color: #f1f1f1;
+}
+
+.input-text--primary-style:focus {
+    background-color: transparent;
+    border-color: #ff4500;
+}
+
+.btn--e-brand-b-2 {
+    color: #ffffff;
+    background-color: #ff4500;
+    border: 2px solid #ff4500;
+    transition: background-color 0.5s ease-in, border-color 0.5s ease-in;
+}
+
+.btn--e-brand-b-2:hover {
+    background-color: #fa4400;
+    border-color: #fa4400;
+    opacity: 0.7;
+}
+
+.btn-submit {
+    padding: 15px 40px;
+    border-radius: 25px;
+    cursor: pointer;
+}.ratio {
+    position: relative;
+    width: 100%;
+}
+.col-4 {
+    width: 32% !important;
+}
+form p.form-label{
+    text-align: left;
+    font-size: 16px;
+}
