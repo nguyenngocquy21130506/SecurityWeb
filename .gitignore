@@ -9,3 +9,5 @@ target/
 
 # image file
 ComMeNau/src/main/webapp/images/
+ComMeNau/src/main/java/com/commenau/util/FaceBookUtil.java
+ComMeNau/src/main/java/com/commenau/util/GoogleUtil.java
