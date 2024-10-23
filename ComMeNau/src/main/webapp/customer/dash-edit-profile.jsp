@@ -1,6 +1,17 @@
+<%@ page import="javax.crypto.SecretKey" %>
+<%@ page import="javax.crypto.Cipher" %>
+<%@ page import="com.commenau.util.AESKeyUtil" %>
+<%@ page import="java.util.Base64" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+
+<%-- Get SecretKey from Context--%>
+<%
+    String secretKeyStr = (String) application.getAttribute("SECRET_KEY");
+    SecretKey secretKey = AESKeyUtil.getAESKeyFromString(secretKeyStr);
+%>
+
 <%--<!DOCTYPE html>--%>
 <html class="no-js" lang="en">
 
@@ -84,7 +95,7 @@
                                             </div>
                                             <div class="row">
                                                 <div class="col-lg-12">
-                                                    <form class="dash-edit-p" id="profileForm">
+                                                    <form method="post" class="dash-edit-p" id="profileForm">
                                                         <div class="gl-inline">
                                                             <div class="u-s-m-b-30">
 
@@ -131,8 +142,7 @@
                                                                 <h2 class="dash__h2 u-s-m-b-8">Địa chỉ <span
                                                                         class="required-check">*</span></h2>
 
-                                                                <%--                                                                <span class="dash__text">Vui lòng nhập địa chỉ của--%>
-                                                                <%--                                                                        bạn của bạn</span>--%>
+                                                                <%-- <span class="dash__text">Vui lòng nhập địa chỉ của bạn của bạn</span> --%>
                                                                 <div class="u-s-m-b-30"
                                                                      style="margin-top: 10px; width: 100%;">
                                                                     <input
@@ -144,7 +154,8 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <button class="btn--e-brand-b-2 btn-submit" type="submit">LƯU</button>
+                                                        <button class="btn--e-brand-b-2 btn-submit" type="submit">LƯU
+                                                        </button>
                                                         <input type="hidden" name="id" value="${auth.id}">
                                                         <c:if test="${requestScope.enoughError!=null}">
                                                             <b class="text-danger">${requestScope.enoughError}</b>
@@ -172,7 +183,13 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="<c:url value="/validate/validator.js"/>"></script>
+<%-- crypto-js cdn --%>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"
+        integrity="sha512-a+SUDuwNzXDvz4XrIcXHuCf089/iJAoN4lmrXJg18XnduKK6YlDHNRalv4yd1N40OKI80tFidF+rqTFKGPoWFQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
+    import {Alert} from "../boostrap/bootstrap-5.3.2-dist/js/bootstrap.esm";
+
     let validate = false;
     // Go to validation
     new Validator(document.querySelector('#profileForm'), function (err, res) {
@@ -181,8 +198,6 @@
 
 
     $('#profileForm').on('submit', function (event) {
-        event.preventDefault(); // Ngăn chặn hành động mặc định của form
-
         // Kiểm tra xác thực trước khi gửi AJAX request
         if (validate === true) {
             var id = $('input[name="id"]').val();
@@ -198,52 +213,88 @@
                 address: address
             };
 
-            // Gửi AJAX request
-            $.ajax({
-                type: 'POST',
-                url: "<c:url value="/change-profile"/>",
-                contentType: 'application/json',
-                data: JSON.stringify(formData),
-                success: function () {
-                    Swal.fire({
-                        icon: "success",
-                        title: "Thay đổi thành công",
-                        toast: true,
-                        position: "top-end",
-                        showConfirmButton: false,
-                        timer: 700,
-                        timerProgressBar: true,
-                        didOpen: (toast) => {
-                            toast.onmouseenter = Swal.stopTimer;
-                            toast.onmouseleave = Swal.resumeTimer;
-                        }
-                    });
-                    setTimeout(function () {
-                        window.location.href = "<c:url value="/profile"/>";
-                    }, 700);
+            // generate secret key
+            var secretKey = <%=secretKey%>;
+            if (secretKey) {
 
-                },
-                error: function () {
-                    Swal.fire({
-                        icon: "warning",
-                        title: "Thay đổi không thành công",
-                        toast: true,
-                        position: "top-end",
-                        showConfirmButton: false,
-                        timer: 1000,
-                        timerProgressBar: true,
-                        didOpen: (toast) => {
-                            toast.onmouseenter = Swal.stopTimer;
-                            toast.onmouseleave = Swal.resumeTimer;
+                // Mã hóa dữ liệu JSON bằng AES
+                const encryptedData = CryptoJS.AES.encrypt(JSON.stringify(formData), secretKey).toString();
+                console.log(`encrypt data:\n\t ${encryptedData}`)
+
+                if (!encryptedData) {
+                    console.log(`encrypt data is not null`)
+                    // Gửi AJAX request
+                    $.ajax({
+                        type: 'POST',
+                        url: `<c:url value="/change-profile"/>`,
+                        contentType: 'application/json',
+                        data: JSON.stringify({encryptedData: encryptedData}),
+                        // data: { encryptedData: encryptedData },
+                        success: function () {
+                            Swal.fire({
+                                icon: "success",
+                                title: "Thay đổi thành công",
+                                toast: true,
+                                position: "top-end",
+                                showConfirmButton: false,
+                                timer: 700,
+                                timerProgressBar: true,
+                                didOpen: (toast) => {
+                                    toast.onmouseenter = Swal.stopTimer;
+                                    toast.onmouseleave = Swal.resumeTimer;
+                                }
+                            });
+                            setTimeout(function () {
+                                window.location.href = "<c:url value="/profile"/>";
+                            }, 700);
+
+                        },
+                        error: function () {
+                            Swal.fire({
+                                icon: "warning",
+                                title: "Thay đổi không thành công",
+                                toast: true,
+                                position: "top-end",
+                                showConfirmButton: false,
+                                timer: 1000,
+                                timerProgressBar: true,
+                                didOpen: (toast) => {
+                                    toast.onmouseenter = Swal.stopTimer;
+                                    toast.onmouseleave = Swal.resumeTimer;
+                                }
+                            });
                         }
                     });
-                }
-            });
+                } else console.log(`encrypt data is null`)
+            } else {
+                alert("An error occurred while generating the secret key.")
+            }
+
         } else {
             // Xử lý khi form chưa được xác thực
             console.log("form error")
         }
+
+        event.preventDefault(); // Ngăn chặn hành động mặc định của form
     });
+
+    async function generateKey() {
+        // Generate a symmetric key for AES-GCM
+        const key = await crypto.subtle.generateKey(
+            {
+                name: "AES-GCM",
+                length: 256,  // Key length: 128, 192, or 256 bits
+            },
+            true,  // Can extract key to export it later
+            ["encrypt", "decrypt"]  // Permitted operations
+        );
+
+        // Export the key to a format that can be used (for example, JSON or base64)
+        const exportedKey = await crypto.subtle.exportKey("jwk", key);
+        console.log("Generated Key (JWK):", exportedKey);
+
+        return exportedKey;  // This key can be stored or shared securely
+    }
 </script>
 </body>
 
