@@ -1,16 +1,9 @@
-<%@ page import="javax.crypto.SecretKey" %>
-<%@ page import="javax.crypto.Cipher" %>
-<%@ page import="com.commenau.util.AESKeyUtil" %>
+
 <%@ page import="java.util.Base64" %>
+<%@ page import="java.security.PublicKey" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-
-<%-- Get SecretKey from Context--%>
-<%
-    String secretKeyStr = (String) application.getAttribute("SECRET_KEY");
-    SecretKey secretKey = AESKeyUtil.getAESKeyFromString(secretKeyStr);
-%>
 
 <%--<!DOCTYPE html>--%>
 <html class="no-js" lang="en">
@@ -132,7 +125,7 @@
                                                                      style="margin-top: 10px; width: 100%;">
                                                                     <input
                                                                             class="input-text input-text--primary-style"
-                                                                            data-rule="required|phone"
+                                                                            data-rule="required"
                                                                             type="text" name="phoneNumber"
                                                                             value="${auth.phoneNumber}"
                                                                             placeholder="Số điện thoại">
@@ -154,7 +147,8 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <button class="btn--e-brand-b-2 btn-submit" type="submit">LƯU
+                                                        <button id="btn_sendform" class="btn--e-brand-b-2 btn-submit"
+                                                                type="button">LƯU
                                                         </button>
                                                         <input type="hidden" name="id" value="${auth.id}">
                                                         <c:if test="${requestScope.enoughError!=null}">
@@ -188,114 +182,118 @@
         integrity="sha512-a+SUDuwNzXDvz4XrIcXHuCf089/iJAoN4lmrXJg18XnduKK6YlDHNRalv4yd1N40OKI80tFidF+rqTFKGPoWFQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
-    import {Alert} from "../boostrap/bootstrap-5.3.2-dist/js/bootstrap.esm";
+    $(document).ready(function () {
 
-    let validate = false;
-    // Go to validation
-    new Validator(document.querySelector('#profileForm'), function (err, res) {
-        validate = res;
-    });
+        let id, lastName, firstName, address, phoneNumber
+
+        <%
+        PublicKey publicKey = (PublicKey) application.getAttribute("PUBLIC_KEY");
+        String publicKeyString = new String(Base64.getEncoder().encode(publicKey.getEncoded()));
+        %>
 
 
-    $('#profileForm').on('submit', function (event) {
-        // Kiểm tra xác thực trước khi gửi AJAX request
-        if (validate === true) {
-            var id = $('input[name="id"]').val();
-            var lastName = $('input[name="lastName"]').val();
-            var firstName = $('input[name="firstName"]').val();
-            var phoneNumber = $('input[name="phoneNumber"]').val();
-            var address = $('input[name="address"]').val();
-            var formData = {
-                id: id,
-                lastName: lastName,
-                firstName: firstName,
-                phoneNumber: phoneNumber,
-                address: address
-            };
+        let validate = true;
+        // Go to validation
+        // new Validator(document.querySelector('#profileForm'), function (err, res) {
+        //     console.log("Validation Errors:", err);
+        //     console.log("Validation Result:", res);
+        //     validate = res;
+        // });
 
-            // generate secret key
-            var secretKey = <%=secretKey%>;
-            if (secretKey) {
+        $('form#profileForm').on('click', 'button#btn_sendform', function () {
 
-                // Mã hóa dữ liệu JSON bằng AES
-                const encryptedData = CryptoJS.AES.encrypt(JSON.stringify(formData), secretKey).toString();
-                console.log(`encrypt data:\n\t ${encryptedData}`)
+            // Kiểm tra xác thực
+            if (validate) {
+                // Lấy dữ liệu từ form
+                id = $('input[name="id"]').val();
+                lastName = $('input[name="lastName"]').val();
+                firstName = $('input[name="firstName"]').val();
+                phoneNumber = $('input[name="phoneNumber"]').val();
+                address = $('input[name="address"]').val();
 
-                if (!encryptedData) {
-                    console.log(`encrypt data is not null`)
-                    // Gửi AJAX request
-                    $.ajax({
-                        type: 'POST',
-                        url: `<c:url value="/change-profile"/>`,
-                        contentType: 'application/json',
-                        data: JSON.stringify({encryptedData: encryptedData}),
-                        // data: { encryptedData: encryptedData },
-                        success: function () {
-                            Swal.fire({
-                                icon: "success",
-                                title: "Thay đổi thành công",
-                                toast: true,
-                                position: "top-end",
-                                showConfirmButton: false,
-                                timer: 700,
-                                timerProgressBar: true,
-                                didOpen: (toast) => {
-                                    toast.onmouseenter = Swal.stopTimer;
-                                    toast.onmouseleave = Swal.resumeTimer;
-                                }
-                            });
-                            setTimeout(function () {
-                                window.location.href = "<c:url value="/profile"/>";
-                            }, 700);
+                const publicKey = "<%= publicKeyString %>";
+                const encrypt = new JSEncrypt();
+                encrypt.setPublicKey(publicKey);
 
-                        },
-                        error: function () {
-                            Swal.fire({
-                                icon: "warning",
-                                title: "Thay đổi không thành công",
-                                toast: true,
-                                position: "top-end",
-                                showConfirmButton: false,
-                                timer: 1000,
-                                timerProgressBar: true,
-                                didOpen: (toast) => {
-                                    toast.onmouseenter = Swal.stopTimer;
-                                    toast.onmouseleave = Swal.resumeTimer;
-                                }
-                            });
-                        }
-                    });
-                } else console.log(`encrypt data is null`)
+                const formData = {
+                    id: id,
+                    lastName: lastName,
+                    firstName: firstName,
+                    phoneNumber: phoneNumber,
+                    address: address
+                };
+
+                // Mã hóa dữ liệu
+                const formDataEncrypt = {
+                    id: encrypt.encrypt(formData.id),
+                    lastName: encrypt.encrypt(formData.lastName),
+                    firstName: encrypt.encrypt(formData.firstName),
+                    phoneNumber: encrypt.encrypt(formData.phoneNumber),
+                    address: encrypt.encrypt(formData.address)
+                };
+
+                // Gửi yêu cầu AJAX
+                $.ajax({
+                    type: 'POST',
+                    url: `<c:url value="/change-profile"/>`,
+                    contentType: 'application/json',
+                    data: JSON.stringify({formDataEncrypt}),
+                    success: function () {
+                        Swal.fire({
+                            icon: "success",
+                            title: "Thay đổi thành công",
+                            toast: true,
+                            position: "top-end",
+                            showConfirmButton: false,
+                            timer: 700,
+                            timerProgressBar: true,
+                            didOpen: (toast) => {
+                                toast.onmouseenter = Swal.stopTimer;
+                                toast.onmouseleave = Swal.resumeTimer;
+                            }
+                        });
+                        setTimeout(function () {
+                            window.location.href = "<c:url value='/profile'/>";
+                        }, 700);
+                    },
+                    error: function () {
+                        Swal.fire({
+                            icon: "warning",
+                            title: "Thay đổi không thành công",
+                            toast: true,
+                            position: "top-end",
+                            showConfirmButton: false,
+                            timer: 1000,
+                            timerProgressBar: true,
+                            didOpen: (toast) => {
+                                toast.onmouseenter = Swal.stopTimer;
+                                toast.onmouseleave = Swal.resumeTimer;
+                            }
+                        });
+                    }
+                });
             } else {
-                alert("An error occurred while generating the secret key.")
+                Swal.fire({
+                    icon: "error",
+                    title: "Thông báo",
+                    text: "Vui lòng kiểm tra lại các thông tin đã nhập.",
+                    confirmButtonText: "OK"
+                });
+                console.log("form error");
             }
+        });
+    })
 
-        } else {
-            // Xử lý khi form chưa được xác thực
-            console.log("form error")
-        }
-
-        event.preventDefault(); // Ngăn chặn hành động mặc định của form
-    });
-
-    async function generateKey() {
-        // Generate a symmetric key for AES-GCM
-        const key = await crypto.subtle.generateKey(
-            {
-                name: "AES-GCM",
-                length: 256,  // Key length: 128, 192, or 256 bits
-            },
-            true,  // Can extract key to export it later
-            ["encrypt", "decrypt"]  // Permitted operations
-        );
-
-        // Export the key to a format that can be used (for example, JSON or base64)
-        const exportedKey = await crypto.subtle.exportKey("jwk", key);
-        console.log("Generated Key (JWK):", exportedKey);
-
-        return exportedKey;  // This key can be stored or shared securely
-    }
+    // function encrypt(plainText, key) {
+    //     var srcs = CryptoJS.enc.Utf8.parse(plainText);
+    //     var encrypted = CryptoJS.AES.encrypt(srcs, key, {mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7});
+    //     return encrypted.toString();
+    // }
 </script>
+<%--CryptoJS--%>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
+<%--JSEncrypt--%>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsencrypt/3.0.0-beta.1/jsencrypt.min.js"></script>
 </body>
 
 </html>

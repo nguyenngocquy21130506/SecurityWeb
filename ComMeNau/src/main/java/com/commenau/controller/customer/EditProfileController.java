@@ -5,26 +5,25 @@ import com.commenau.log.LogService;
 import com.commenau.model.LogLevel;
 import com.commenau.model.User;
 import com.commenau.service.UserService;
-import com.commenau.util.AESKeyUtil;
-import com.commenau.util.FormUtil;
-import com.commenau.util.HttpUtil;
 import com.commenau.validate.Validator;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
-import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
+import javax.crypto.*;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 @WebServlet("/change-profile")
 public class EditProfileController extends HttpServlet {
@@ -41,48 +40,56 @@ public class EditProfileController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        String secretKeyStr = (String) getServletContext().getAttribute("SECRET_KEY");
-        SecretKey secretKey = AESKeyUtil.getAESKeyFromString(secretKeyStr);
+        BufferedReader reader = req.getReader();
+        StringBuilder jsonStringBuilder = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            jsonStringBuilder.append(line);
+        }
+        String jsonString = jsonStringBuilder.toString();
 
-        // Lấy dữ liệu đã mã hóa từ form
-//        String encryptedText = req.getParameter("encryptedData");
-        String encryptedText = HttpUtil.of(req.getReader()).toModel(Map.class).get("encryptedData").toString();
-        if (!Objects.isNull(encryptedText) && !encryptedText.isBlank()) {
-            System.out.println("Get Encrypted Text from Ajax:\n\t" + encryptedText);
+        Gson gson = new Gson();
+        JsonObject jsonObject = gson.fromJson(jsonString, JsonObject.class);
 
-            String decryptedData = decryptAES(encryptedText, secretKey);
+        // Trích xuất formDataEncrypt từ JSON
+        JsonObject formDataEncrypt = jsonObject.getAsJsonObject("formDataEncrypt");
+        System.out.println("Received Encrypted Data: " + formDataEncrypt);
 
-            User user = new ObjectMapper().readValue(decryptedData, User.class);
+        User user = User.builder()
+                .id(Long.parseLong(decrypt(formDataEncrypt.get("id").getAsString(), req)))
+                .phoneNumber(decrypt(formDataEncrypt.get("phoneNumber").getAsString(), req))
+                .firstName(decrypt(formDataEncrypt.get("firstName").getAsString(), req))
+                .lastName(decrypt(formDataEncrypt.get("lastName").getAsString(), req))
+                .address(decrypt(formDataEncrypt.get("address").getAsString(), req))
+                .build();
+//        User user = HttpUtil.of(req.getReader()).toModel(User.class);
+        User preUser = userService.getUserById(user.getId());
+        boolean hasError = validate(user);
+        if (!hasError) {
+            boolean result = userService.updateProfile(user);
+            Map<String, String> preData = new HashMap<>();
+            Map<String, String> data = new HashMap<>();
+            preData.put("username", preUser.getUsername());
+            preData.put("firstName", preUser.getFirstName());
+            preData.put("lastName", preUser.getLastName());
+            preData.put("phoneNumber", preUser.getPhoneNumber());
+            preData.put("address", preUser.getAddress());
 
-//            User user = HttpUtil.of(req.getReader()).toModel(User.class);
-            User preUser = userService.getUserById(user.getId());
-            boolean hasError = validate(user);
-            if (!hasError) {
-                boolean result = userService.updateProfile(user);
-                Map<String, String> preData = new HashMap<>();
-                Map<String, String> data = new HashMap<>();
-                preData.put("username", preUser.getUsername());
-                preData.put("firstName", preUser.getFirstName());
-                preData.put("lastName", preUser.getLastName());
-                preData.put("phoneNumber", preUser.getPhoneNumber());
-                preData.put("address", preUser.getAddress());
-
-                data.put("username", user.getUsername());
-                data.put("firstName", user.getFirstName());
-                data.put("lastName", user.getLastName());
-                data.put("phoneNumber", user.getPhoneNumber());
-                data.put("address", user.getAddress());
-                if (result) {
-                    logService.save(LogLevel.INFO, "success", preData, data);
-                } else {
-                    logService.save(LogLevel.WARNING, "failed", preData, data);
-                }
-                req.getSession().setAttribute(SystemConstant.AUTH, user);
-                resp.setStatus(result ? HttpServletResponse.SC_OK : HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            data.put("username", user.getUsername());
+            data.put("firstName", user.getFirstName());
+            data.put("lastName", user.getLastName());
+            data.put("phoneNumber", user.getPhoneNumber());
+            data.put("address", user.getAddress());
+            if (result) {
+                logService.save(LogLevel.INFO, "success", preData, data);
             } else {
-                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                logService.save(LogLevel.WARNING, "failed", preData, data);
             }
-        } else resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            req.getSession().setAttribute(SystemConstant.AUTH, user);
+            resp.setStatus(result ? HttpServletResponse.SC_OK : HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        } else {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        }
     }
 
     private boolean validate(User user) {
@@ -91,15 +98,29 @@ public class EditProfileController extends HttpServlet {
 
     }
 
-    private String decryptAES(String encryptedData, SecretKey secretKey) {
+    public static String decrypt(String encryptedText, HttpServletRequest req) {
+        PrivateKey privateKey = (PrivateKey) req.getServletContext().getAttribute("PRIVATE_KEY");
+        // Chuyển đổi chuỗi base64 thành byte array
+        byte[] encryptedBytes = Base64.getDecoder().decode(encryptedText);
+
+        // Khởi tạo cipher để giải mã với RSA
+        Cipher cipher = null;
         try {
-            Cipher cipher = Cipher.getInstance("AES");
-            cipher.init(Cipher.DECRYPT_MODE, secretKey);
-            byte[] decodedValue = Base64.getDecoder().decode(encryptedData);
-            byte[] decryptedValue = cipher.doFinal(decodedValue);
-            return new String(decryptedValue);
-        } catch (Exception e) {
-            throw new RuntimeException("Lỗi giải mã", e);
+            cipher = Cipher.getInstance("RSA");
+            cipher.init(Cipher.DECRYPT_MODE, privateKey);
+            byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
+            // Giải mã
+            return new String(decryptedBytes);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchPaddingException e) {
+            throw new RuntimeException(e);
+        } catch (InvalidKeyException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalBlockSizeException e) {
+            throw new RuntimeException(e);
+        } catch (BadPaddingException e) {
+            throw new RuntimeException(e);
         }
     }
 }
