@@ -35,7 +35,7 @@ public class InvoiceDAO {
 
     public Invoice getInvoiceById(int invoiceId) {
         return ConnectionPool.getConnection().withHandle(handle -> {
-            return handle.createQuery("select id,userId,voucherId,fullName,email,province,district,ward,note,shippingFee,address,phoneNumber,paymentMethod,timeDelivery from invoices where id = ?")
+            return handle.createQuery("select id,userId,voucherId,fullName,email,province,district,ward,note,shippingFee,address,phoneNumber,paymentMethod from invoices where id = ?")
                     .bind(0, invoiceId)
                     .mapToBean(Invoice.class)
                     .first();

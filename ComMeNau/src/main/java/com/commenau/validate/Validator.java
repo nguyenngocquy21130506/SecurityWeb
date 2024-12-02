@@ -18,10 +18,8 @@ public class Validator {
     public static boolean isValidPassword(String password) {
         if (isEmpty(password))
             return false;
-        String passwordRegex = "/^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[\\W_]).+$/";
-        Pattern pattern = Pattern.compile(passwordRegex);
-        Matcher matcher = pattern.matcher(password);
-        return matcher.matches();
+        String passwordRegex = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[\\W_]).+$";
+        return Pattern.compile(passwordRegex).matcher(password).matches();
     }
 
     public static boolean isValidPhoneNumber(String phoneNumber) {
