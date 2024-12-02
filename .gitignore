@@ -1,5 +1,8 @@
-target/
+# Intellij
+*.iml
+*.iws
 .idea/
+
 # Compiled class file
 *.class
 
@@ -9,3 +12,22 @@ target/
 
 # image file
 ComMeNau/src/main/webapp/images/
+
+# package files
+*.jar
+*.war
+*.ear
+
+# Maven
+log/
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+
+# Tomcat
+*.smarttomcat/
+
