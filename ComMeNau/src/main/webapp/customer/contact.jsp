@@ -137,6 +137,7 @@
 <script src="<c:url value="/validate/validator.js"/>"></script>
 <%--<script src="<c:url value="/jquey/jquery.min.js"/>"></script>--%>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 <script>
     $(document).ready(function () {
         let validate = false; // Khởi tạo biến validate
@@ -146,19 +147,49 @@
             validate = res; // Gán giá trị xác thực vào biến validate
         });
 
-        // Intercept form submission
+        // Tạo key ngẫu nhiên
+        function generateSecretKey() {
+            const array = new Uint8Array(8); // DES sử dụng khóa 64 bit (8 bytes)
+            window.crypto.getRandomValues(array); // Tạo mảng ngẫu nhiên
+
+            // Giới hạn giá trị từ 0 đến 255 để đảm bảo phù hợp với yêu cầu khóa DES
+            const secretKey = array.map(byte => String.fromCharCode(byte)).join('');
+
+            // Mã hóa khóa bằng Base64 trước khi gửi
+            const secretKeyBase64 = btoa(secretKey);
+            console.log('secretKeyBase64:', secretKeyBase64);
+            return secretKeyBase64;
+        }
+
+// Intercept form submission
         $('#contactForm').on('submit', function (event) {
             event.preventDefault(); // Ngăn chặn hành động mặc định của form
 
             // Kiểm tra xác thực trước khi gửi AJAX request
             if (validate === true) {
-                var fullName = $('input[name="fullName"]').val();
+                var fullname = $('input[name="fullName"]').val();
                 var email = $('input[name="email"]').val();
                 var message = $('textarea[name="message"]').val();
-                var formData = {
-                    fullName: fullName,
-                    email: email,
-                    message: message
+
+                // Mã hóa dữ liệu bằng DES
+                const secretKey = generateSecretKey();
+                var enFullname = CryptoJS.DES.encrypt("abcdef", secretKey, {
+                    mode: CryptoJS.mode.ECB,
+                        padding: CryptoJS.pad.Pkcs7
+                }).toString();
+                var enEmail = CryptoJS.DES.encrypt("b@gmail.com", secretKey, {
+                    mode: CryptoJS.mode.ECB,
+                        padding: CryptoJS.pad.Pkcs7 // Sử dụng padding
+                }).toString();
+                var enMessage = CryptoJS.DES.encrypt("hello every one", secretKey, {
+                    mode: CryptoJS.mode.ECB,
+                        padding: CryptoJS.pad.Pkcs7 // Sử dụng padding
+                }).toString();
+
+                var enFormData = {
+                    enFullname: enFullname,
+                    enEmail: enEmail,
+                    enMessage: enMessage,
                 };
 
                 // Gửi AJAX request
@@ -166,10 +197,11 @@
                     type: 'POST',
                     url: $(this).attr('action'),
                     contentType: 'application/json',
-                    data: JSON.stringify(formData),
+                    data: JSON.stringify({
+                        enFormData: enFormData,
+                        secretKey: secretKey
+                    }),
                     success: function (response) {
-                        // console.log("success")
-                        //reset value
                         $('input[name="fullName"]').val("");
                         $('input[name="email"]').val("");
                         $('textarea[name="message"]').val("");
@@ -187,10 +219,8 @@
                                 toast.onmouseleave = Swal.resumeTimer;
                             }
                         });
-
                     },
                     error: function (xhr, status, error) {
-                        // console.log("eror")
                         Swal.fire({
                             icon: "warning",
                             title: "Gửi thất bại!",
@@ -207,10 +237,10 @@
                     }
                 });
             } else {
-                // Xử lý khi form chưa được xác thực
-                console.log("form error")
+                console.log("form error");
             }
         });
+
     });
 </script>
 </body>
