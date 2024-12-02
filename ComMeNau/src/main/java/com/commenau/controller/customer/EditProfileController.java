@@ -5,17 +5,23 @@ import com.commenau.log.LogService;
 import com.commenau.model.LogLevel;
 import com.commenau.model.User;
 import com.commenau.service.UserService;
-import com.commenau.util.FormUtil;
-import com.commenau.util.HttpUtil;
 import com.commenau.validate.Validator;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
+import javax.crypto.*;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,7 +39,30 @@ public class EditProfileController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        User user = HttpUtil.of(req.getReader()).toModel(User.class);
+
+        BufferedReader reader = req.getReader();
+        StringBuilder jsonStringBuilder = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            jsonStringBuilder.append(line);
+        }
+        String jsonString = jsonStringBuilder.toString();
+
+        Gson gson = new Gson();
+        JsonObject jsonObject = gson.fromJson(jsonString, JsonObject.class);
+
+        // Trích xuất formDataEncrypt từ JSON
+        JsonObject formDataEncrypt = jsonObject.getAsJsonObject("formDataEncrypt");
+        System.out.println("Received Encrypted Data: " + formDataEncrypt);
+
+        User user = User.builder()
+                .id(Long.parseLong(decrypt(formDataEncrypt.get("id").getAsString(), req)))
+                .phoneNumber(decrypt(formDataEncrypt.get("phoneNumber").getAsString(), req))
+                .firstName(decrypt(formDataEncrypt.get("firstName").getAsString(), req))
+                .lastName(decrypt(formDataEncrypt.get("lastName").getAsString(), req))
+                .address(decrypt(formDataEncrypt.get("address").getAsString(), req))
+                .build();
+//        User user = HttpUtil.of(req.getReader()).toModel(User.class);
         User preUser = userService.getUserById(user.getId());
         boolean hasError = validate(user);
         if (!hasError) {
@@ -51,10 +80,10 @@ public class EditProfileController extends HttpServlet {
             data.put("lastName", user.getLastName());
             data.put("phoneNumber", user.getPhoneNumber());
             data.put("address", user.getAddress());
-            if(result){
-                logService.save(LogLevel.INFO,"success",preData,data);
-            }else{
-                logService.save(LogLevel.WARNING,"failed",preData,data);
+            if (result) {
+                logService.save(LogLevel.INFO, "success", preData, data);
+            } else {
+                logService.save(LogLevel.WARNING, "failed", preData, data);
             }
             req.getSession().setAttribute(SystemConstant.AUTH, user);
             resp.setStatus(result ? HttpServletResponse.SC_OK : HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -67,5 +96,31 @@ public class EditProfileController extends HttpServlet {
         return Validator.isEmpty(user.getFirstName()) || Validator.isEmpty(user.getLastName()) ||
                 Validator.isEmpty(user.getAddress()) || !Validator.isValidPhoneNumber(user.getPhoneNumber());
 
+    }
+
+    public static String decrypt(String encryptedText, HttpServletRequest req) {
+        PrivateKey privateKey = (PrivateKey) req.getServletContext().getAttribute("PRIVATE_KEY");
+        // Chuyển đổi chuỗi base64 thành byte array
+        byte[] encryptedBytes = Base64.getDecoder().decode(encryptedText);
+
+        // Khởi tạo cipher để giải mã với RSA
+        Cipher cipher = null;
+        try {
+            cipher = Cipher.getInstance("RSA");
+            cipher.init(Cipher.DECRYPT_MODE, privateKey);
+            byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
+            // Giải mã
+            return new String(decryptedBytes);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchPaddingException e) {
+            throw new RuntimeException(e);
+        } catch (InvalidKeyException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalBlockSizeException e) {
+            throw new RuntimeException(e);
+        } catch (BadPaddingException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
