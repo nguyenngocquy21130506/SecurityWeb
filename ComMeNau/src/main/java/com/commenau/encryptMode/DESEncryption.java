@@ -10,7 +10,7 @@ import java.util.Base64;
 public class DESEncryption {
     private static SecretKey secretKey;
 
-    public void setSecretKey(byte[] keyBytes) {
+    public static void setSecretKey(byte[] keyBytes) {
         // Đảm bảo rằng chiều dài của decodedKey là 8 byte (64 bit)
         if (keyBytes.length != 8) {
             throw new IllegalArgumentException("Invalid key length: " + keyBytes.length);
