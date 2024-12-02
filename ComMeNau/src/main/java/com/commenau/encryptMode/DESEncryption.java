@@ -2,13 +2,25 @@ package com.commenau.encryptMode;
 
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
-public class DESEncryption {
+public class DESEncryption implements Serializable {
+    private static final String ALGORITHM_NAME = "DES";
     private static SecretKey secretKey;
+
+    public static SecretKey convertStringToSecretKey(String encodedKey){
+        byte[] decodedKey = Base64.getDecoder().decode(encodedKey);
+        return new SecretKeySpec(decodedKey, 0, decodedKey.length, ALGORITHM_NAME);
+    }
+
+    public static String getSecretKey(){
+        byte[] rawData = secretKey.getEncoded();
+        return Base64.getEncoder().encodeToString(rawData);
+    }
 
     public static void setSecretKey(byte[] keyBytes) {
         // Đảm bảo rằng chiều dài của decodedKey là 8 byte (64 bit)
@@ -16,11 +28,11 @@ public class DESEncryption {
             throw new IllegalArgumentException("Invalid key length: " + keyBytes.length);
         }
         // Tạo SecretKeySpec với toàn bộ mảng byte
-        secretKey = new SecretKeySpec(keyBytes, "DES");
+        secretKey = new SecretKeySpec(keyBytes, ALGORITHM_NAME);
     }
 
     public static void generateKey() throws NoSuchAlgorithmException {
-        KeyGenerator keyGenerator = KeyGenerator.getInstance("DES");
+        KeyGenerator keyGenerator = KeyGenerator.getInstance(ALGORITHM_NAME);
         keyGenerator.init(56);
         secretKey = keyGenerator.generateKey();
     }
