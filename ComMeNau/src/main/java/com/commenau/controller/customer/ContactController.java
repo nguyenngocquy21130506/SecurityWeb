@@ -38,9 +38,18 @@ public class ContactController extends HttpServlet {
     @Inject
     private LogService logService;
 
+    @Inject
+    private DESEncryption desEncryption;
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String currentPage = request.getRequestURL().toString();
+        try {
+            desEncryption = new DESEncryption();
+            request.setAttribute("secretKey", desEncryption.getSecretKey());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         request.getSession().setAttribute(SystemConstant.PRE_PAGE, currentPage);
         request.getRequestDispatcher("/customer/contact.jsp").forward(request, response);
     }
@@ -51,7 +60,7 @@ public class ContactController extends HttpServlet {
         JsonNode jsonNode = mapper.readTree(request.getReader());
 
         JsonNode enFormData = jsonNode.get("enFormData");
-        String secretKey = SystemConstant.mapKey.get("a@gmail.com");
+        String secretKey = desEncryption.getSecretKey();
 
         String enFullname = enFormData.get("enFullname") != null ? enFormData.get("enFullname").asText() : null;
         String enEmail = enFormData.get("enEmail") != null ? enFormData.get("enEmail").asText() : null;

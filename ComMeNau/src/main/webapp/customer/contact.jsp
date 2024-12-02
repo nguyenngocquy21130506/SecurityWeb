@@ -154,7 +154,7 @@
             // Kiểm tra xác thực trước khi gửi AJAX request
             if (validate === true) {
 
-                <%--let secretKey = <%= desEncryption.getSecretKey() %>--%>
+                var secretKey = <%=request.getAttribute("secretKey")%>
                 alert('secretKey : '+ secretKey);
                 var fullname = $('input[name="fullName"]').val();
                 var email = $('input[name="email"]').val();
