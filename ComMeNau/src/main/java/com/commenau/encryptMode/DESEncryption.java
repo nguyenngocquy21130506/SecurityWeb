@@ -25,6 +25,12 @@ public class DESEncryption {
         secretKey = keyGen.generateKey();
     }
 
+    public String getSecretKey() {
+        String key = Base64.getEncoder().encodeToString(secretKey.getEncoded());
+        System.out.println("Generated Secret Key: " + key);
+        return key;
+    }
+
     public byte[] encrypt(String message) throws Exception {
         Cipher cipher = Cipher.getInstance("DES");
         cipher.init(Cipher.ENCRYPT_MODE, secretKey);

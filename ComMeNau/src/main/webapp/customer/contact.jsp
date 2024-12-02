@@ -1,6 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-
+<%@ page import="com.commenau.encryptMode.DESEncryption" %>
+<%@ page import="com.commenau.constant.SystemConstant" %>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -98,12 +99,14 @@
                                     <div class="row">
                                         <div class="col-lg-6 u-h-100 pd-1">
                                             <div class="m-b-30">
-                                                <p class="form-label">Nhập họ tên<span class="required-check">*</span></p>
+                                                <p class="form-label">Nhập họ tên<span class="required-check">*</span>
+                                                </p>
                                                 <input class="input-text input-text--border-radius input-text--primary-style"
                                                        type="text" name="fullName"
                                                        data-rule="required|containsAllWhitespace"></div>
                                             <div class="m-b-30">
-                                                <p class="form-label">Nhập email<span class="required-check">*</span></p>
+                                                <p class="form-label">Nhập email<span class="required-check">*</span>
+                                                </p>
                                                 <input class="input-text input-text--border-radius input-text--primary-style"
                                                        type="email" name="email" data-rule="required|email"></div>
                                         </div>
@@ -146,62 +149,50 @@
         new Validator(document.querySelector('#contactForm'), function (err, res) {
             validate = res; // Gán giá trị xác thực vào biến validate
         });
-
-        // Tạo key ngẫu nhiên
-        function generateSecretKey() {
-            const array = new Uint8Array(8); // DES sử dụng khóa 64 bit (8 bytes)
-            window.crypto.getRandomValues(array); // Tạo mảng ngẫu nhiên
-
-            // Giới hạn giá trị từ 0 đến 255 để đảm bảo phù hợp với yêu cầu khóa DES
-            const secretKey = array.map(byte => String.fromCharCode(byte)).join('');
-
-            // Mã hóa khóa bằng Base64 trước khi gửi
-            const secretKeyBase64 = btoa(secretKey);
-            console.log('secretKeyBase64:', secretKeyBase64);
-            return secretKeyBase64;
-        }
-
-// Intercept form submission
         $('#contactForm').on('submit', function (event) {
-            event.preventDefault(); // Ngăn chặn hành động mặc định của form
 
             // Kiểm tra xác thực trước khi gửi AJAX request
             if (validate === true) {
+
+                <%--let secretKey = <%= desEncryption.getSecretKey() %>--%>
+                alert('secretKey : '+ secretKey);
                 var fullname = $('input[name="fullName"]').val();
                 var email = $('input[name="email"]').val();
                 var message = $('textarea[name="message"]').val();
 
                 // Mã hóa dữ liệu bằng DES
-                const secretKey = generateSecretKey();
-                var enFullname = CryptoJS.DES.encrypt("abcdef", secretKey, {
+                var enFullname = CryptoJS.DES.encrypt(fullname, secretKey, {
                     mode: CryptoJS.mode.ECB,
-                        padding: CryptoJS.pad.Pkcs7
+                    padding: CryptoJS.pad.Pkcs7
                 }).toString();
-                var enEmail = CryptoJS.DES.encrypt("b@gmail.com", secretKey, {
+                var enEmail = CryptoJS.DES.encrypt(email, secretKey, {
                     mode: CryptoJS.mode.ECB,
-                        padding: CryptoJS.pad.Pkcs7 // Sử dụng padding
+                    padding: CryptoJS.pad.Pkcs7 // Sử dụng padding
                 }).toString();
-                var enMessage = CryptoJS.DES.encrypt("hello every one", secretKey, {
+                var enMessage = CryptoJS.DES.encrypt(message, secretKey, {
                     mode: CryptoJS.mode.ECB,
-                        padding: CryptoJS.pad.Pkcs7 // Sử dụng padding
+                    padding: CryptoJS.pad.Pkcs7 // Sử dụng padding
                 }).toString();
 
+                // {
+                //     SystemConstant.mapKey.put(email, secretKey)
+                // }
                 var enFormData = {
                     enFullname: enFullname,
                     enEmail: enEmail,
                     enMessage: enMessage,
                 };
 
+                alert(enFormData);
+
                 // Gửi AJAX request
                 $.ajax({
                     type: 'POST',
                     url: $(this).attr('action'),
                     contentType: 'application/json',
-                    data: JSON.stringify({
-                        enFormData: enFormData,
-                        secretKey: secretKey
-                    }),
+                    data: JSON.stringify({enFormData: enFormData}),
                     success: function (response) {
+                        console.log('enFormData', enFormData)
                         $('input[name="fullName"]').val("");
                         $('input[name="email"]').val("");
                         $('textarea[name="message"]').val("");
@@ -221,6 +212,7 @@
                         });
                     },
                     error: function (xhr, status, error) {
+                        console.log('enFormData', enFormData)
                         Swal.fire({
                             icon: "warning",
                             title: "Gửi thất bại!",
@@ -239,6 +231,7 @@
             } else {
                 console.log("form error");
             }
+            event.preventDefault(); // Ngăn chặn hành động mặc định của form
         });
 
     });

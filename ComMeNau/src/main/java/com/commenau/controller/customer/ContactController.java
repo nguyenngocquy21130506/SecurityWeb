@@ -51,11 +51,12 @@ public class ContactController extends HttpServlet {
         JsonNode jsonNode = mapper.readTree(request.getReader());
 
         JsonNode enFormData = jsonNode.get("enFormData");
-        String secretKey = jsonNode.get("secretKey").asText();
+        String secretKey = SystemConstant.mapKey.get("a@gmail.com");
 
-        String enFullname = enFormData.get("enFullname").asText();
-        String enEmail = enFormData.get("enEmail").asText();
-        String enMessage = enFormData.get("enMessage").asText();
+        String enFullname = enFormData.get("enFullname") != null ? enFormData.get("enFullname").asText() : null;
+        String enEmail = enFormData.get("enEmail") != null ? enFormData.get("enEmail").asText() : null;
+        String enMessage = enFormData.get("enMessage") != null ? enFormData.get("enMessage").asText() : null;
+
         String enFullname1 = enFullname.substring(10);
         String enEmail1 = enEmail.substring(10);
         String enMessage1 = enMessage.substring(10);
