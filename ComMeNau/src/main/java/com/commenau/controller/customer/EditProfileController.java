@@ -1,6 +1,7 @@
 package com.commenau.controller.customer;
 
 import com.commenau.constant.SystemConstant;
+import com.commenau.encryptMode.RSA;
 import com.commenau.log.LogService;
 import com.commenau.model.LogLevel;
 import com.commenau.model.User;
@@ -18,12 +19,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
+import java.nio.charset.StandardCharsets;
+import java.security.*;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @WebServlet("/change-profile")
 public class EditProfileController extends HttpServlet {
@@ -34,11 +36,18 @@ public class EditProfileController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // get user from session
+        User user = (User) req.getSession().getAttribute(SystemConstant.AUTH);  // with case user's not exist in session, it's return null, and i didn't throw it
+        if (Objects.isNull(user)) req.setAttribute("user-id", user.getId());
         req.getRequestDispatcher("/customer/dash-edit-profile.jsp").forward(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+//        User user = (User) req.getSession().getAttribute(SystemConstant.AUTH);  // with case user's not exist in session, it's return null, and i didn't throw it
+//        Map<Long, String> userKeys = (Map<Long,String>)req.getSession().getAttribute(SystemConstant.USER_KEYS);
+//        userKeys.get(user.getId());
 
         BufferedReader reader = req.getReader();
         StringBuilder jsonStringBuilder = new StringBuilder();
@@ -55,14 +64,37 @@ public class EditProfileController extends HttpServlet {
         JsonObject formDataEncrypt = jsonObject.getAsJsonObject("formDataEncrypt");
         System.out.println("Received Encrypted Data: " + formDataEncrypt);
 
+        // Lấy public key từ JSON
+        String publicKeyString = formDataEncrypt.get("publicKey").getAsString().trim();
+
+        // Chuyển đổi public key string thành định dạng chuẩn
+        publicKeyString = publicKeyString.replaceAll("\\n", "\n"); // Đảm bảo rằng các ký tự xuống dòng được giữ lại
+        publicKeyString = publicKeyString.replaceAll("-----BEGIN PUBLIC KEY-----", "")
+                .replaceAll("-----END PUBLIC KEY-----", "")
+                .trim(); // Xóa các phần không cần thiết
+
+        PublicKey publicKey;
+        try {
+            // Giải mã chuỗi Base64 thành mảng byte
+            byte[] keyBytes = Base64.getDecoder().decode(publicKeyString);
+
+            // Tạo đối tượng PublicKey từ mảng byte
+            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            publicKey = keyFactory.generatePublic(keySpec);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to convert string to PublicKey", e);
+        }
+
+        if (publicKey==null) return;
+
         User user = User.builder()
-                .id(Long.parseLong(decrypt(formDataEncrypt.get("id").getAsString(), req)))
-                .phoneNumber(decrypt(formDataEncrypt.get("phoneNumber").getAsString(), req))
-                .firstName(decrypt(formDataEncrypt.get("firstName").getAsString(), req))
-                .lastName(decrypt(formDataEncrypt.get("lastName").getAsString(), req))
-                .address(decrypt(formDataEncrypt.get("address").getAsString(), req))
+                .id(Long.parseLong(decrypt(formDataEncrypt.get("id").getAsString(), publicKey)))
+                .phoneNumber(decrypt(formDataEncrypt.get("phoneNumber").getAsString(), publicKey))
+                .firstName(decrypt(formDataEncrypt.get("firstName").getAsString(), publicKey))
+                .lastName(decrypt(formDataEncrypt.get("lastName").getAsString(), publicKey))
+                .address(decrypt(formDataEncrypt.get("address").getAsString(), publicKey))
                 .build();
-//        User user = HttpUtil.of(req.getReader()).toModel(User.class);
         User preUser = userService.getUserById(user.getId());
         boolean hasError = validate(user);
         if (!hasError) {
@@ -98,8 +130,7 @@ public class EditProfileController extends HttpServlet {
 
     }
 
-    public static String decrypt(String encryptedText, HttpServletRequest req) {
-        PrivateKey privateKey = (PrivateKey) req.getServletContext().getAttribute("PRIVATE_KEY");
+    public static String decrypt(String encryptedText, PublicKey publicKey) {
         // Chuyển đổi chuỗi base64 thành byte array
         byte[] encryptedBytes = Base64.getDecoder().decode(encryptedText);
 
@@ -107,7 +138,7 @@ public class EditProfileController extends HttpServlet {
         Cipher cipher = null;
         try {
             cipher = Cipher.getInstance("RSA");
-            cipher.init(Cipher.DECRYPT_MODE, privateKey);
+            cipher.init(Cipher.DECRYPT_MODE, publicKey);
             byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
             // Giải mã
             return new String(decryptedBytes);
