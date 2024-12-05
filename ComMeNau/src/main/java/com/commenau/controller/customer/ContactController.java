@@ -38,7 +38,6 @@ public class ContactController extends HttpServlet {
     @Inject
     private LogService logService;
 
-    @Inject
     private DESEncryption desEncryption;
 
     @Override
@@ -46,7 +45,10 @@ public class ContactController extends HttpServlet {
         String currentPage = request.getRequestURL().toString();
         try {
             desEncryption = new DESEncryption();
-            request.setAttribute("secretKey", desEncryption.getSecretKey());
+            desEncryption.generateKey();
+            String secret = desEncryption.getSecretKey().substring(0,8);
+            desEncryption.setSecretKey(new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "DES"));
+            request.setAttribute("secretKey", secret);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -60,26 +62,10 @@ public class ContactController extends HttpServlet {
         JsonNode jsonNode = mapper.readTree(request.getReader());
 
         JsonNode enFormData = jsonNode.get("enFormData");
-        String secretKey = desEncryption.getSecretKey();
 
         String enFullname = enFormData.get("enFullname") != null ? enFormData.get("enFullname").asText() : null;
         String enEmail = enFormData.get("enEmail") != null ? enFormData.get("enEmail").asText() : null;
         String enMessage = enFormData.get("enMessage") != null ? enFormData.get("enMessage").asText() : null;
-
-        String enFullname1 = enFullname.substring(10);
-        String enEmail1 = enEmail.substring(10);
-        String enMessage1 = enMessage.substring(10);
-
-        DESEncryption desEncryption;
-        try {
-            desEncryption = new DESEncryption();
-            // Giải mã secretKey từ Base64
-            byte[] decodedKey = Base64.getDecoder().decode(secretKey);
-            desEncryption.setSecretKey(decodedKey); // Truyền mảng byte cho phương thức setSecretKey
-        } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return; // Trả về lỗi nếu có vấn đề với secretKey
-        }
 
         String fullname = null;
         String email = null;

@@ -140,7 +140,7 @@
 <script src="<c:url value="/validate/validator.js"/>"></script>
 <%--<script src="<c:url value="/jquey/jquery.min.js"/>"></script>--%>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.min.js"></script>
 <script>
     $(document).ready(function () {
         let validate = false; // Khởi tạo biến validate
@@ -149,41 +149,57 @@
         new Validator(document.querySelector('#contactForm'), function (err, res) {
             validate = res; // Gán giá trị xác thực vào biến validate
         });
+
         $('#contactForm').on('submit', function (event) {
 
             // Kiểm tra xác thực trước khi gửi AJAX request
             if (validate === true) {
+                <%
+                    String secretKey = (String) request.getAttribute("secretKey");
+                    if (secretKey == null) {
+                        out.println("secretKey is null");
+                    }
+                %>
+                var iv = CryptoJS.enc.Utf8.parse("ivStatic");
 
-                var secretKey = <%=request.getAttribute("secretKey")%>
-                alert('secretKey : '+ secretKey);
+                var secretKey = "<%= secretKey %>";
+                console.log('secretKey', secretKey)
                 var fullname = $('input[name="fullName"]').val();
                 var email = $('input[name="email"]').val();
                 var message = $('textarea[name="message"]').val();
 
+
                 // Mã hóa dữ liệu bằng DES
-                var enFullname = CryptoJS.DES.encrypt(fullname, secretKey, {
-                    mode: CryptoJS.mode.ECB,
-                    padding: CryptoJS.pad.Pkcs7
-                }).toString();
-                var enEmail = CryptoJS.DES.encrypt(email, secretKey, {
-                    mode: CryptoJS.mode.ECB,
-                    padding: CryptoJS.pad.Pkcs7 // Sử dụng padding
-                }).toString();
-                var enMessage = CryptoJS.DES.encrypt(message, secretKey, {
-                    mode: CryptoJS.mode.ECB,
+                var enFullname = CryptoJS.DES.encrypt(fullname, CryptoJS.enc.Utf8.parse(secretKey), {
+                    iv: iv,
+                    mode: CryptoJS.mode.CBC,
                     padding: CryptoJS.pad.Pkcs7 // Sử dụng padding
                 }).toString();
 
-                // {
-                //     SystemConstant.mapKey.put(email, secretKey)
-                // }
+                var enEmail = CryptoJS.DES.encrypt(email, CryptoJS.enc.Utf8.parse(secretKey), {
+                    iv: iv,
+                    mode: CryptoJS.mode.CBC,
+                    padding: CryptoJS.pad.Pkcs7 // Sử dụng padding
+                }).toString();
+
+                var enMessage = CryptoJS.DES.encrypt(message, CryptoJS.enc.Utf8.parse(secretKey), {
+                    iv: iv,
+                    mode: CryptoJS.mode.CBC,
+                    padding: CryptoJS.pad.Pkcs7 // Sử dụng padding
+                }).toString();
+
+                // var enFormData = {
+                //     enFullname: enFullname,
+                //     enEmail: enEmail,
+                //     enMessage: enMessage,
+                // };
                 var enFormData = {
                     enFullname: enFullname,
                     enEmail: enEmail,
                     enMessage: enMessage,
                 };
 
-                alert(enFormData);
+                console.log(enFormData);
 
                 // Gửi AJAX request
                 $.ajax({
