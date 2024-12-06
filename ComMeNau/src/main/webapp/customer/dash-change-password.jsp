@@ -27,6 +27,14 @@
 </head>
 
 <body class="config">
+
+<%-- pre-condition --%>
+<%
+    Object obj = request.getAttribute("privateKey");
+    if (obj == null) response.sendRedirect("/index.jsp");
+    String privateKey = obj.toString();
+%>
+
 <!--====== Main App ======-->
 <div id="app">
 
@@ -107,7 +115,8 @@
                                                                        placeholder="Nhập lại mật khẩu mới">
                                                             </div>
                                                         </div>
-                                                        <button class="btn--e-brand-b-2 btn-submit" type="submit">LƯU</button>
+                                                        <button id="btn_sendform" class="btn--e-brand-b-2 btn-submit" type="submit">LƯU
+                                                        </button>
                                                     </form>
                                                 </div>
                                             </div>
@@ -134,90 +143,100 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-    var options = {
-        // set a custom rule
-        rules: {
-            confirmed: function (value) {
-                var passwordValue = document.querySelector('input[name="newPassword"]').value;
-                // Check if confirmPassword matches the password
-                return (value === passwordValue);
-            }
-        },
-        messages: {
-            vi: {
-                confirmed: {
-                    empty: 'Vui lòng nhập trường này',
-                    incorrect: 'Mật khẩu không khớp. Vui lòng nhập lại.'
+    $(document).ready(function () {
+        var options = {
+            // set a custom rule
+            rules: {
+                confirmed: function (value) {
+                    var passwordValue = document.querySelector('input[name="newPassword"]').value;
+                    // Check if confirmPassword matches the password
+                    return (value === passwordValue);
+                }
+            },
+            messages: {
+                vi: {
+                    confirmed: {
+                        empty: 'Vui lòng nhập trường này',
+                        incorrect: 'Mật khẩu không khớp. Vui lòng nhập lại.'
+                    }
                 }
             }
-        }
-    };
-    // Go to validation
-    let validate = false;
-    new Validator(document.querySelector('#changePassForm'), function (err, res) {
-        validate = res;
-    }, options);
+        };
+        // Go to validation
+        let validate = false;
+        new Validator(document.querySelector('#changePassForm'), function (err, res) {
+            validate = res;
+        }, options);
 
-    $('#changePassForm').on('submit', function (event) {
-        event.preventDefault(); // Ngăn chặn hành động mặc định của form
+        $('#changePassForm').on('submit', function (event) {
+            event.preventDefault(); // Ngăn chặn hành động mặc định của form
 
-        // Kiểm tra xác thực trước khi gửi AJAX request
-        if (validate === true) {
-            var newPassword = $('input[name="newPassword"]').val();
-            var confirmPassword = $('input[name="confirmPassword"]').val();
-            var currentPassword = $('input[name="currentPassword"]').val();
-            var formData = {
-                newPassword: newPassword,
-                confirmPassword: confirmPassword,
-                currentPassword: currentPassword
-            };
+            // Kiểm tra xác thực trước khi gửi AJAX request
+            if (validate === true) {
+                var newPassword = $('input[name="newPassword"]').val();
+                var confirmPassword = $('input[name="confirmPassword"]').val();
+                var currentPassword = $('input[name="currentPassword"]').val();
 
-            // Gửi AJAX request
-            $.ajax({
-                type: 'POST',
-                url: "<c:url value="/change-password"/>",
-                data: formData,
-                success: function () {
-                    Swal.fire({
-                        icon: "success",
-                        title: "Thay đổi thành công",
-                        toast: true,
-                        position: "top-end",
-                        showConfirmButton: false,
-                        timer: 700,
-                        timerProgressBar: true,
-                        didOpen: (toast) => {
-                            toast.onmouseenter = Swal.stopTimer;
-                            toast.onmouseleave = Swal.resumeTimer;
-                        }
-                    });
-                    setTimeout(function () {
-                        window.location.href = "<c:url value="/profile"/>";
-                    }, 700);
+                const encrypt = new JSEncrypt();
+                encrypt.setPrivateKey('<%=privateKey%>')
 
-                },
-                error: function () {
-                    Swal.fire({
-                        icon: "warning",
-                        title: "Thay đổi không thành công",
-                        toast: true,
-                        position: "top-end",
-                        showConfirmButton: false,
-                        timer: 1000,
-                        timerProgressBar: true,
-                        didOpen: (toast) => {
-                            toast.onmouseenter = Swal.stopTimer;
-                            toast.onmouseleave = Swal.resumeTimer;
-                        }
-                    });
-                }
-            });
-        } else {
-            // Xử lý khi form chưa được xác thực
-            console.log("form error")
-        }
-    });
+                var formData = {
+                    newPassword: encrypt.encrypt(newPassword),
+                    confirmPassword: encrypt.encrypt(confirmPassword),
+                    currentPassword: encrypt.encrypt(currentPassword)
+                };
+
+                // Gửi AJAX request
+                $.ajax({
+                    type: 'POST',
+                    url: "<c:url value="/change-password"/>",
+                    data: formData,
+                    success: function () {
+                        Swal.fire({
+                            icon: "success",
+                            title: "Thay đổi thành công",
+                            toast: true,
+                            position: "top-end",
+                            showConfirmButton: false,
+                            timer: 700,
+                            timerProgressBar: true,
+                            didOpen: (toast) => {
+                                toast.onmouseenter = Swal.stopTimer;
+                                toast.onmouseleave = Swal.resumeTimer;
+                            }
+                        });
+                        setTimeout(function () {
+                            window.location.href = "<c:url value="/profile"/>";
+                        }, 700);
+
+                    },
+                    error: function () {
+                        Swal.fire({
+                            icon: "warning",
+                            title: "Thay đổi không thành công",
+                            toast: true,
+                            position: "top-end",
+                            showConfirmButton: false,
+                            timer: 1000,
+                            timerProgressBar: true,
+                            didOpen: (toast) => {
+                                toast.onmouseenter = Swal.stopTimer;
+                                toast.onmouseleave = Swal.resumeTimer;
+                            }
+                        });
+                    }
+                });
+            } else {
+                // Xử lý khi form chưa được xác thực
+                console.log("form error")
+            }
+        });
+    })
 </script>
+<%--CryptoJS--%>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
+<%--JSEncrypt--%>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsencrypt/3.0.0-beta.1/jsencrypt.min.js"></script>
 
 </body>
 

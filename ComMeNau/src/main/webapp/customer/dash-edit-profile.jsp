@@ -1,8 +1,5 @@
 <%@ page import="java.util.Base64" %>
 <%@ page import="java.security.PublicKey" %>
-<%@ page import="com.commenau.encryptMode.RSA" %>
-<%@ page import="java.util.Objects" %>
-<%@ page import="java.util.Map" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
@@ -38,6 +35,7 @@
     <%@ include file="/customer/common/header.jsp" %>
     <jsp:include page="common/chat.jsp"></jsp:include>
     <!--====== End - Main Header ======-->
+
 
     <!--====== App Content ======-->
     <div class="container-content mt-5">
@@ -175,6 +173,12 @@
 
     <!--====== Main Footer ======-->
     <%@include file="/customer/common/footer.jsp" %>
+
+    <%
+        Object obj = request.getAttribute("privateKey");
+        if(obj == null) response.sendRedirect("/index.jsp");
+        String privateKey = obj.toString();
+    %>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="<c:url value="/validate/validator.js"/>"></script>
@@ -187,17 +191,6 @@
 
         let id, lastName, firstName, address, phoneNumber
 
-        <%
-//        long user_id=0;
-//        Object obj = request.getAttribute("user-id");
-//        if (obj!=null) user_id = (long) obj;
-//        Map<Long, String> userKeys = (Map<Long,String>)request.getSession().getAttribute(SystemConstant.USER_KEYS);
-
-//        RSA rsa = new RSA();
-//        String privateKeyString = new String(Base64.getEncoder().encode(rsa.getPrivateKey().getEncoded()));
-//        userKeys.put(user_id, Base64.getEncoder().encodeToString(rsa.getPublicKey().getEncoded()));
-//        request.getSession().setAttribute(SystemConstant.USER_KEYS, userKeys);
-        %>
 
         let validate = true;
         // Go to validation
@@ -218,9 +211,8 @@
                 phoneNumber = $('input[name="phoneNumber"]').val();
                 address = $('input[name="address"]').val();
 
-                <%--const privateKey = "<%= privateKeyString %>";--%>
-                const encrypt = new JSEncrypt({default_key_size: 2048});
-                // encrypt.setPrivateKey(privateKey);
+                const encrypt = new JSEncrypt();
+                encrypt.setPrivateKey('<%=privateKey%>');
 
                 const formData = {
                     id: id,
@@ -232,8 +224,6 @@
 
                 // Mã hóa dữ liệu
                 const formDataEncrypt = {
-                    <%--publicKey: <%=rsa.getPublicKey()%>,--%>
-                    publicKey: encrypt.getPublicKey(),
                     id: encrypt.encrypt(formData.id),
                     lastName: encrypt.encrypt(formData.lastName),
                     firstName: encrypt.encrypt(formData.firstName),
