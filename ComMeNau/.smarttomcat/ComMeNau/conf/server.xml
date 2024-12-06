@@ -75,7 +75,7 @@
                />
 
     <Connector port="8443" maxHttpHeaderSize="8192"
-               protocol="HTTP/1.1" SSLEnabled="false"
+               protocol="HTTP/1.1" SSLEnabled="true"
                maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
                enableLookups="false" disableUploadTimeout="true"
                acceptCount="100" scheme="https" secure="true"
