@@ -1,4 +1,5 @@
-package com.commenau.encryptMode;
+//21130506_Nguyễn Ngọc Quý_DH21DTC
+package Algorithm;
 
 import java.io.File;
 import java.io.FileInputStream;

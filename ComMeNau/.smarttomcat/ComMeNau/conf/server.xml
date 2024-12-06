@@ -73,6 +73,14 @@
                redirectPort="8443"
                maxParameterCount="1000"
                />
+
+    <Connector port="8443" maxHttpHeaderSize="8192"
+               maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
+               enableLookups="false" disableUploadTimeout="true"
+               acceptCount="100" scheme="https" secure="true"
+               keystoreFile="E:\Gits\SecurityWeb\ComMeNau\.smarttomcat\ComMeNau\conf\mycertificate.cert" keystorePass="09092008"
+               clientAuth="false" sslProtocol="TLS" />
+
     <!-- A "Connector" using the shared thread pool-->
     <!--
     <Connector executor="tomcatThreadPool"
