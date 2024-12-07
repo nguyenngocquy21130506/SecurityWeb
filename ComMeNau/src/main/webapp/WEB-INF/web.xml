@@ -45,4 +45,12 @@
     <session-config>
         <tracking-mode>COOKIE</tracking-mode>
     </session-config>
+    <servlet>
+        <servlet-name>DownloadController</servlet-name>
+        <servlet-class>com.commenau.controller.customer.DownloadController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DownloadController</servlet-name>
+        <url-pattern>/download</url-pattern>
+    </servlet-mapping>
 </web-app>

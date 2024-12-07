@@ -57,6 +57,11 @@
                                     </ul>
                                 </div>
                             </div>
+                            <form action="<c:url value="/download"/>" method="Post">
+                                <button  class="btn btn--e-brand-b-2 w-100 d-flex align-items-center justify-content-center" type="submit">
+                                    <span class="m-r-6">Tải xuống công cụ ký</span> <i class="fa-solid fa-download"></i>
+                                </button>
+                            </form>
                             <!--====== End - Dashboard Features ======-->
                         </div>
                         <div class="col-lg-9 col-md-12">
@@ -101,14 +106,11 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-lg-12">
-
                                                 <div class="u-s-m-b-16">
-
                                                     <a class="dash__custom-link btn--e-transparent-brand-b-2 btn--e-brand-b-2"
                                                        href="<c:url value="/change-profile"/>">Thay đổi thông tin</a>
                                                 </div>
                                                 <div>
-
                                                     <a class="dash__custom-link btn--e-brand-b-2"
                                                        href="<c:url value="/change-password"/>">Thay đổi mật
                                                         khẩu</a>
