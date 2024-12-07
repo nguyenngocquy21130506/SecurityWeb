@@ -83,7 +83,7 @@
                 <h1 class="checkout-f__h1">SƠ LƯỢC ĐƠN HÀNG</h1>
 
                 <div class="o-summary">
-                    <div class="o-summary__section u-s-m-b-30">
+                    <div class="o-summary__section u-s-m-b-10">
                         <div class="o-summary__item-wrap gl-scroll">
                             <c:forEach var="item" items="${cartItems}">
                                 <div class="o-card">
@@ -108,8 +108,7 @@
                             </c:forEach>
                         </div>
                     </div>
-
-                    <div class="o-summary__section u-s-m-b-30">
+                    <div class="o-summary__section u-s-m-b-10">
                         <div class="o-summary__box">
                             <table class="o-summary__table">
                                 <tbody>
@@ -139,11 +138,12 @@
                     </div>
                     <div class="u-s-m-b-5">
                         <div class="o-summary__box">
-                            <i class="fa-solid fa-tags"></i> <i>Chương trình khuyến mãi được áp dụng cho những <b>ngày lễ</b> hoặc các <b>ngày trùng với tháng</b></i>
+                            <i class="fa-solid fa-tags"></i> <i>Chương trình khuyến mãi được áp dụng cho những <b>ngày
+                            lễ</b> hoặc các <b>ngày trùng với tháng</b></i>
                         </div>
                     </div>
-                    <div class="o-summary__section u-s-m-b-30">
-                        <div class="o-summary__box">
+                    <div class="o-summary__section u-s-m-b-10">
+                        <div class="o-summary__box" style="padding: 10px 20px">
                             <a href="<c:url value="/vouchers"/>" style="
                                 color: #ff4500;
                                 font-weight: 700;
@@ -166,7 +166,41 @@
                                 <i class='fa-solid fa-angle-right'></i></a>
                         </div>
                     </div>
-                    <div class="o-summary__section u-s-m-b-30">
+                    <div class="o-summary__section u-s-m-b-10">
+                        <div class="o-summary__box">
+                            <h1 class="checkout-f__h1">XÁC THỰC</h1>
+                            <div class="u-s-m-b-10" style="margin-top: 20px;">
+                                <!--====== Signature ======-->
+                                <span>Chọn file dữ liệu chữ ký của đơn hàng</span>
+                                <div class="o-summary__box d-flex flex">
+                                    <input type="file" id="file-signature" name="file-signature" style="display: none;">
+                                    <label for="file-signature" class="file-signature">
+                                        Tải lên</label>
+                                    <span class="file-content" id="file-content">
+                                        <!-- Nội dung tệp sẽ được hiển thị tại đây -->
+                                    </span>
+                                    <span class="view-content-signature">
+                                    👁️
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="u-s-m-b-10" style="margin-top: 10px;">
+                                <!--====== Public key ======-->
+                                <span>Chọn khóa công khai dùng xác thực đơn hàng</span>
+                                <div class="o-summary__box d-flex flex-column">
+                                    <select id="select"
+                                            style="padding: 5px 10px;height: 40px; border-radius: 5px;
+                                            color: orangered; border-color: orangered">
+                                        <option value="0"> Chọn khóa công khai phù hợp với chữ ký!</option>
+                                        <c:forEach var="item" items="${publicKeys}">
+                                            <option value="${item}">${item}</option>
+                                        </c:forEach>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="o-summary__section u-s-m-b-10">
                         <div class="o-summary__box">
                             <h1 class="checkout-f__h1">THÔNG TIN THANH TOÁN</h1>
                             <div class="u-s-m-b-10 d-flex flex-column" style="margin-top: 20px;">
@@ -372,7 +406,7 @@
         $('#wardSelected').change(function () {
             var wardId = $('#wardSelected option:selected').data("info");// Lấy giá trị ID của quận/huyện đã chọn
             var districtId = $('#districtSelected option:selected').data("info");
-            console.log(wardId +"  "+districtId);
+            console.log(wardId + "  " + districtId);
             var jsonData = {
                 "from_district_id": 1458,
                 "from_ward_code": "21608",
@@ -419,6 +453,50 @@
 
             // Thêm đồng VND vào sau chuỗi đã được định dạng
             return parts.join(".") + " đ";
+        }
+    });
+</script>
+<%-- script for load file--%>
+<script>
+    document.getElementById('load-signature').addEventListener('click', () => {
+        document.getElementById('file-signature').click(); // Mở hộp chọn file
+    });
+
+    document.getElementById('file-signature').addEventListener('change', (event) => {
+        const file = event.target.files[0]; // Lấy file đã chọn
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const fileContent = e.target.result; // Nội dung file dưới dạng chuỗi
+                console.log('Nội dung file:', fileContent);
+            };
+            reader.readAsText(file); // Đọc file dưới dạng text
+        }
+    });
+</script>
+<script>
+    document.getElementById("file-signature").addEventListener("change", function (event) {
+        const file = event.target.files[0]; // Lấy tệp được tải lên
+        const fileContentDiv = document.getElementById("file-content");
+        const view = document.querySelector(".view-content-signature");
+
+        if (file) {
+            const reader = new FileReader();
+
+            // Khi đọc xong tệp
+            reader.onload = function (e) {
+                const content = e.target.result; // Nội dung tệp
+                fileContentDiv.textContent = content; // Hiển thị nội dung tệp
+                view.title = content; // Hiển thị toàn bộ nội dung khi hover
+                view.style.display = 'block';
+                view.style.cursor = 'pointer';
+                view.style.opacity = 0.8;
+            };
+
+            // Đọc tệp dưới dạng văn bản
+            reader.readAsText(file);
+        } else {
+            fileContentDiv.textContent = "Không có tệp nào được chọn.";
         }
     });
 </script>

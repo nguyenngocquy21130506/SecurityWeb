@@ -10,6 +10,7 @@
     color: #333333;
     font-size: 18px;
     margin-bottom: 8px;
+    height: 30px;
 }
 
 .check-box__label:before,
@@ -42,27 +43,30 @@
 }
 
 .checkout-f .btn {
-    margin-top: 30px;
+    margin-top: 15px;
     font-weight: 600;
     padding: 18px;
     width: 100%;
 }
 
 .o-summary__box {
-    padding: 20px;
+    padding: 5px 20px;
 }
 
-.o-summary__box a{
+.o-summary__box a {
     text-decoration: none;
     color: #ff4500;
     font-weight: 700;
 }
-.o-summary__box a:hover i{
+
+.o-summary__box a:hover i {
     opacity: 0.8;
 }
+
 .o-summary__box i {
     color: #ff4500
 }
+
 .o-summary__section {
     background-color: #ffffff;
     border: 1px solid #eee;
@@ -319,12 +323,49 @@
     border: 2px solid #ff4500 !important;
     opacity: .7 !important;
 }
-a.disabled i{
+
+a.disabled i {
     color: #bdc3c7;
 }
+
 a.disabled {
     pointer-events: none; /* Vô hiệu hóa sự kiện click */
     cursor: default; /* Đổi con trỏ khi di chuột qua */
     opacity: 0.8;
     color: #bdc3c7 !important;
+}
+
+.file-signature:hover {
+    cursor: pointer;
+    opacity: 0.8;
+    title: "Tải file chứa chữ ký lên";
+}
+
+.file-signature {
+    width: 100px;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    color: white;
+    text-align: center;
+    background-color: orangered
+}
+
+.file-content {
+    width: 75%;
+    height: 44px;
+    overflow: hidden;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    white-space: nowrap; /* Ngăn dòng mới, giữ nội dung trong cùng một dòng */
+    text-overflow: ellipsis; /* Hiển thị "..." khi nội dung vượt quá */
+}
+.
+.view:hover{
+    cursor: pointer;
+    opacity: 0.8;
+}
+.view-content-signature{
+    display: none; margin-top: 10px
 }
