@@ -7,6 +7,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
@@ -51,71 +52,29 @@ public class RSA {
 
     public String encrypt(String message) throws Exception {
         Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-        cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+        cipher.init(Cipher.ENCRYPT_MODE, privateKey);
         byte[] encryptedBytes = cipher.doFinal(message.getBytes());
         return Base64.getEncoder().encodeToString(encryptedBytes);
     }
 
     public String decrypt(String encryptedMessage) throws Exception {
         Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-        cipher.init(Cipher.DECRYPT_MODE, privateKey);
-        byte[] decryptedBytes = cipher.doFinal(Base64.getDecoder().decode(encryptedMessage));
+        cipher.init(Cipher.DECRYPT_MODE, publicKey);
+        byte[] decryptedBytes = cipher.doFinal(Base64.getDecoder().decode(encryptedMessage.getBytes(StandardCharsets.UTF_8)));
         return new String(decryptedBytes);
     }
 
-    public boolean encryptFile(String src, String des) throws Exception {
-        Cipher cipher = Cipher.getInstance("RSA");
-        cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-
-        Cipher cipherAES = Cipher.getInstance("AES");
-        cipherAES.init(Cipher.ENCRYPT_MODE, secretKey);
-
-        byte[] keyEncrypt = cipher.doFinal(secretKey.getEncoded());
-
-        DataInputStream dis = new DataInputStream(new FileInputStream(src));
-        DataOutputStream dos = new DataOutputStream(new FileOutputStream(des));
-        CipherOutputStream cos = new CipherOutputStream(dos, cipherAES);
-
-        dos.writeUTF(Base64.getEncoder().encodeToString(keyEncrypt));
-
-        byte[] buf = new byte[1024];
-        int i;
-        while ((i = dis.read(buf)) != -1) {
-            cos.write(buf, 0, i);
+    public static void main(String[] args) {
+        try {
+            RSA rsa = new RSA();
+            String message = "a";
+            String encryptedMessage = rsa.encrypt(message);
+            System.out.println("Encrypted message: " + encryptedMessage);
+            System.out.println("length: " + encryptedMessage.length());
+            String decryptedMessage = rsa.decrypt(encryptedMessage);
+            System.out.println("Decrypted message: " + decryptedMessage);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        cos.close();
-        dos.close();
-        dis.close();
-        return true;
-    }
-
-    public boolean decryptFile(String src, String des) throws Exception {
-        Cipher cipher = Cipher.getInstance("RSA");
-        cipher.init(Cipher.DECRYPT_MODE, privateKey);
-
-        DataInputStream dis = new DataInputStream(new FileInputStream(src));
-        DataOutputStream dos = new DataOutputStream(new FileOutputStream(des));
-
-        String keyOfFile = dis.readUTF();
-        byte[] keyEncrypt = Base64.getDecoder().decode(keyOfFile);
-
-        byte[] aesKey = cipher.doFinal(keyEncrypt);
-        SecretKey originalKey = new SecretKeySpec(aesKey, "AES");
-
-        Cipher cipherAES = Cipher.getInstance("AES");
-        cipherAES.init(Cipher.DECRYPT_MODE, originalKey);
-
-        CipherInputStream cis = new CipherInputStream(dis, cipherAES);
-        byte[] buf = new byte[1024];
-        int i;
-        while ((i = cis.read(buf)) != -1) {
-            dos.write(buf, 0, i);
-        }
-        dos.flush();
-        cis.close();
-        dos.close();
-        dis.close();
-
-        return true;
     }
 }

@@ -25,6 +25,7 @@
             margin: 0px;
             text-decoration: none;
         }
+
         .product-link {
             padding: 10px;
             display: block;
@@ -32,6 +33,7 @@
             font-size: 14px;
             cursor: pointer;
         }
+
         .product-link:hover {
             background-color: gainsboro;
         }
@@ -77,7 +79,8 @@
                             <div class="px-4 d-none d-md-block">
                                 <div class="d-flex align-items-center">
                                     <div class="flex-grow-1 " style="position: relative">
-                                        <input id="main-search" type="text" class="form-control mt-3" placeholder="Search...">
+                                        <input id="main-search" type="text" class="form-control mt-3"
+                                               placeholder="Search...">
                                         <ul style="width: 100%;
                         position: absolute;
                         background: white;
@@ -94,11 +97,13 @@
                             </div>
                             <hr class="d-block d-lg-none mt-1 mb-0">
                         </div>
-                        <div class="chat-container col-8  border border-left" style="display: none ; min-height: 540px; max-height: 550px">
+                        <div class="chat-container col-8  border border-left"
+                             style="display: none ; min-height: 540px; max-height: 550px">
                             <div class="py-2 px-4 border-bottom d-none d-lg-block">
                                 <div class="d-flex align-items-center py-1">
                                     <div class="position-relative">
-                                        <img src="images/avatar-icon.jpg" class="rounded-circle mr-1" alt="Sharon Lessman"
+                                        <img src="images/avatar-icon.jpg" class="rounded-circle mr-1"
+                                             alt="Sharon Lessman"
                                              width="40" height="40">
                                     </div>
                                     <div class="flex-grow-1 pl-3 ms-2">
@@ -159,6 +164,7 @@
         socket.onopen = function (event) {
 
         };
+
         function formatTime(date, format) {
             var hours = date.getHours();
             var minutes = date.getMinutes();
@@ -177,12 +183,14 @@
 
         socket.onmessage = function (event) {
             var chatmessage = JSON.parse(event.data);
+
+            // decrypt message at real time
+
             if (userIdShow == chatmessage.senderId) {
                 gennerateMessage(chatmessage.content, 'user', chatmessage.time, false);
-                loadUsers(false , false);
-            }
-            else {
-                loadUsers(false , true);
+                loadUsers(false, false);
+            } else {
+                loadUsers(false, true);
             }
         };
 
@@ -203,11 +211,10 @@
         }
 
         if (userIdShow != null) {
-            loadUsers(false , true)
+            loadUsers(false, true)
             updateView(userIdShow)
-        }
-        else{
-            loadUsers(true , true);
+        } else {
+            loadUsers(true, true);
         }
 
         function loadMessages(userId) {
@@ -241,7 +248,7 @@
             }
         });
 
-        function loadUsers(loadMessage , mark) {
+        function loadUsers(loadMessage, mark) {
             $.ajax({
                 type: "GET",
                 url: "http://localhost:8080/admin/chat/users",
@@ -262,7 +269,7 @@
                             badge = `<div class="badge bg-success ">!</div>`;
                         }
 
-                        var content = response[i].message.content.length < 30 ? response[i].message.content :  response[i].message.content.toString().substr(0,30).concat("...");
+                        var content = response[i].message.content.length < 30 ? response[i].message.content : response[i].message.content.toString().substr(0, 30).concat("...");
 
                         var user = ` <a href="/admin/chat?user=` + response[i].id + `" class="user-chat d-flex flex-row justify-content-between px-5 pb-3 border-0">
         <div class="d-flex align-items-start">
@@ -275,13 +282,13 @@
         </div>
         <div class="float-right">
         ` + badge + `
-        <div class="fw-bold">` + formatTime(time , "hh:mm") + `</div>
+        <div class="fw-bold">` + formatTime(time, "hh:mm") + `</div>
         </div>
         </a>`
 
                         $("#users").append(user);
-                        if(userIdShow == response[i].id){
-                            $(".chat-container").css("display","block")
+                        if (userIdShow == response[i].id) {
+                            $(".chat-container").css("display", "block")
                             $("#username").text(response[i].name)
                             updateView(userIdShow);
                             loadMessages(userIdShow);
@@ -294,8 +301,6 @@
         }
 
 
-
-
         $(".list-group-item").click(function () {
             $(".chat-messages").empty();
         });
@@ -306,8 +311,8 @@
                 return false;
             }
             gennerateMessage(msg, 'self', new Date().getTime(), false);
-            loadUsers(false , false);
-            var message = { receiverId:userIdShow,msg: msg}
+            loadUsers(false, false);
+            var message = {receiverId: userIdShow, msg: msg}
 
             socket.send(JSON.stringify(message));
 
@@ -327,7 +332,7 @@
            ` + msg + `
         </div>
         <div class="time">
-            ` +formatTime(sendTime,"hh:mm")+ `
+            ` + formatTime(sendTime, "hh:mm") + `
         </div>
     </div>`
             if (pre) {
@@ -340,12 +345,12 @@
         // search
         $(document).on("mousedown", function (event) {
             // Kiểm tra xem phần tử được click có là con của #yourDiv hay không
-            if ((!$('#searchResults').is(event.target) && ! $('#searchResults').has(event.target).length) || ($('#main-search').is(event.target) && !$('#main-search').has(event.target).length)){
+            if ((!$('#searchResults').is(event.target) && !$('#searchResults').has(event.target).length) || ($('#main-search').is(event.target) && !$('#main-search').has(event.target).length)) {
                 $('#main-search').val("");
                 $('#searchResults').empty();
             }
         });
-        $('#main-search').on("input",function (){
+        $('#main-search').on("input", function () {
             $('#searchResults').empty();
             var query = $(this).val().toLowerCase();
             if (query !== '') {
@@ -358,7 +363,7 @@
 
                         var data = JSON.parse(response);
                         data.forEach(element => {
-                            $('#searchResults').append("<a href='/admin/chat?user="+  element.id + "' class='product-link'>" + element.name + "</a>");
+                            $('#searchResults').append("<a href='/admin/chat?user=" + element.id + "' class='product-link'>" + element.name + "</a>");
                             $('#searchResults li:gt(7)').remove();
                         });
                     }

@@ -28,8 +28,8 @@
             </form>
         </div>
     </div>
-
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsencrypt/3.0.0-beta.1/jsencrypt.min.js"></script>
 <script>
     $(document).ready(function () {
 
@@ -48,8 +48,7 @@
             var viewed = false;
             if ($('.chat-box').css('display') === 'block') {
                 viewed = true;
-            }
-            else{
+            } else {
                 if (!$('#noti').hasClass("notification-badge")) {
                     $('#noti').addClass("notification-badge");
                     $('#noti').text("!")
@@ -72,7 +71,7 @@
             if ($('.chat-logs').css('display') === 'block') {
                 $.ajax({
                     type: "PUT",
-                    url: "http://localhost:8080/message/" + userId +"?ownerId="+userId,
+                    url: "http://localhost:8080/message/" + userId + "?ownerId=" + userId,
                     contentType: "application/x-www-form-urlencoded; charset=UTF-16",
                     // Serialize dữ liệu biểu mẫu
                     success: function (response) {
@@ -135,7 +134,7 @@
             })
 
             var date = new Date(sendtime);
-            var y = formatTime(date,"hh:mm");
+            var y = formatTime(date, "hh:mm");
             time.append(y)
             message.append(time);
             chatmessage.append(avatar);
@@ -177,19 +176,34 @@
 
         $("#chat-submit").click(function (e) {
             e.preventDefault();
+
+            <%
+                String privateKey = (String) session.getAttribute("privateKey");
+            %>
+
+            var privateKey = "<%= privateKey %>";
+            console.log("privateKey: ", privateKey)
             var msg = $("#chat-input").val();
+            console.log("msg: ", msg)
+
+            var encrypt = new JSEncrypt();
+            encrypt.setPrivateKey(privateKey);
+            var enMessage = encrypt.encrypt(msg);
+            var base64Message = btoa(enMessage);  // Mã hóa Base64
+
             if (msg.trim() == '') {
                 return false;
             }
             $("#chat-input").val('');
 
-            var message = {msg: msg}
+            var message = {msg: base64Message}
 
             socket.send(JSON.stringify(message));
 
             generate_message(userId, msg, 'self', new Date().getTime(), false);
 
         })
+
         function formatTime(date, format) {
             var hours = date.getHours();
             var minutes = date.getMinutes();

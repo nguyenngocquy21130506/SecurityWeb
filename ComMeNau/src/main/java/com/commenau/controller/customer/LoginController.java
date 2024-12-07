@@ -2,6 +2,7 @@ package com.commenau.controller.customer;
 
 import com.commenau.constant.SystemConstant;
 import com.commenau.dao.UserDAO;
+import com.commenau.encryptMode.RSA;
 import com.commenau.log.LogService;
 import com.commenau.model.LogLevel;
 import com.commenau.model.User;
@@ -10,6 +11,7 @@ import com.commenau.service.UserService;
 import com.commenau.util.EncryptUtil;
 import com.commenau.util.FormUtil;
 import com.commenau.util.VerifyCaptcha;
+import com.mysql.cj.Session;
 
 import javax.inject.Inject;
 import javax.servlet.ServletException;
@@ -17,6 +19,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
 import java.time.LocalTime;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,6 +31,8 @@ public class LoginController extends HttpServlet {
     private RoleService roleService;
     @Inject
     private LogService logService;
+
+    private RSA rsa;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -45,6 +50,7 @@ public class LoginController extends HttpServlet {
                     rememberMe = cookie.getValue();
             }
         }
+
         request.setAttribute("username", username);
         request.setAttribute("password", EncryptUtil.decrypt(password));
         request.setAttribute("rememberMe", rememberMe);
@@ -83,6 +89,19 @@ public class LoginController extends HttpServlet {
                 cPassword.setMaxAge(0);
                 cRememberMe.setMaxAge(0);
             }
+
+            try {
+                rsa = new RSA();
+                String privateKey = Base64.getEncoder().encodeToString(rsa.getPrivateKey().getEncoded());
+                String publicKey = Base64.getEncoder().encodeToString(rsa.getPublicKey().getEncoded());
+                System.out.println("privateKey: " + privateKey);
+                System.out.println("publicKey: " + publicKey);
+                session.setAttribute("privateKey", privateKey);
+                session.setAttribute("publicKey", publicKey);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
             response.addCookie(cUsername);
             response.addCookie(cPassword);
             response.addCookie(cRememberMe);
