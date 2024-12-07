@@ -53,6 +53,9 @@
                                         <li>
                                             <a href="<c:url value="/invoices"/>">Đơn đặt hàng</a>
                                         </li>
+                                        <li>
+                                            <a href="<c:url value="/keypair-manager"/>">Quản lý bảo mật</a>
+                                        </li>
 
                                     </ul>
                                 </div>

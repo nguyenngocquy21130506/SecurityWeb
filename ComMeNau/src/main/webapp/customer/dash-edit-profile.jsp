@@ -1,4 +1,3 @@
-
 <%@ page import="java.util.Base64" %>
 <%@ page import="java.security.PublicKey" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -174,6 +173,12 @@
 
     <!--====== Main Footer ======-->
     <%@include file="/customer/common/footer.jsp" %>
+
+    <%
+        Object obj = request.getAttribute("privateKey");
+        if(obj == null) response.sendRedirect("/index.jsp");
+        String privateKey = obj.toString();
+    %>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="<c:url value="/validate/validator.js"/>"></script>
@@ -185,11 +190,6 @@
     $(document).ready(function () {
 
         let id, lastName, firstName, address, phoneNumber
-
-        <%
-        PublicKey publicKey = (PublicKey) application.getAttribute("PUBLIC_KEY");
-        String publicKeyString = new String(Base64.getEncoder().encode(publicKey.getEncoded()));
-        %>
 
 
         let validate = true;
@@ -211,9 +211,8 @@
                 phoneNumber = $('input[name="phoneNumber"]').val();
                 address = $('input[name="address"]').val();
 
-                const publicKey = "<%= publicKeyString %>";
                 const encrypt = new JSEncrypt();
-                encrypt.setPublicKey(publicKey);
+                encrypt.setPrivateKey('<%=privateKey%>');
 
                 const formData = {
                     id: id,

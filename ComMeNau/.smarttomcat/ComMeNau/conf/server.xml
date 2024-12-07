@@ -74,9 +74,14 @@
                maxParameterCount="1000"
                />
 
-    <Connector port="8443" protocol="HTTP/1.1" SSLEnabled="true"
-               maxThreads="150" scheme="https" secure="true"
-               clientAuth="false" sslProtocol="TLS" keystoreFile="D:\SubjectAtSchool\NongLam\ATBM_T6\SecurityWeb\ComMeNau\.smarttomcat\ComMeNau\conf\keystore.jks" keystorePass="LeLong@123"/>
+    <Connector port="8443" maxHttpHeaderSize="8192"
+               protocol="HTTP/1.1" SSLEnabled="true"
+               maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
+               enableLookups="false" disableUploadTimeout="true"
+               acceptCount="100" scheme="https" secure="true"
+               keystoreFile="E:\Gits\SecurityWeb\ComMeNau\.smarttomcat\ComMeNau\conf\mycertificate.cert" keystorePass="09092008"
+               clientAuth="false" sslProtocol="TLS" />
+
     <!-- A "Connector" using the shared thread pool-->
     <!--
     <Connector executor="tomcatThreadPool"

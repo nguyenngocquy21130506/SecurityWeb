@@ -1,6 +1,7 @@
 package com.commenau.controller.customer;
 
 import com.commenau.constant.SystemConstant;
+import com.commenau.encryptMode.RSA;
 import com.commenau.log.LogService;
 import com.commenau.model.LogLevel;
 import com.commenau.model.User;
@@ -16,6 +17,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.security.InvalidKeyException;
@@ -31,9 +33,20 @@ public class EditProfileController extends HttpServlet {
     UserService userService;
     @Inject
     LogService logService;
+    private RSA rsa;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        try {
+            rsa = new RSA();
+            String privateKey = Base64.getEncoder().encodeToString(rsa.getPrivateKey().getEncoded());
+
+            req.setAttribute("privateKey", privateKey);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
         req.getRequestDispatcher("/customer/dash-edit-profile.jsp").forward(req, resp);
     }
 
@@ -98,8 +111,8 @@ public class EditProfileController extends HttpServlet {
 
     }
 
-    public static String decrypt(String encryptedText, HttpServletRequest req) {
-        PrivateKey privateKey = (PrivateKey) req.getServletContext().getAttribute("PRIVATE_KEY");
+    private String decrypt(String encryptedText, HttpServletRequest req) {
+//        PrivateKey privateKey = (PrivateKey) req.getServletContext().getAttribute("PRIVATE_KEY");
         // Chuyển đổi chuỗi base64 thành byte array
         byte[] encryptedBytes = Base64.getDecoder().decode(encryptedText);
 
@@ -107,7 +120,7 @@ public class EditProfileController extends HttpServlet {
         Cipher cipher = null;
         try {
             cipher = Cipher.getInstance("RSA");
-            cipher.init(Cipher.DECRYPT_MODE, privateKey);
+            cipher.init(Cipher.DECRYPT_MODE, rsa.getPrivateKey());
             byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
             // Giải mã
             return new String(decryptedBytes);

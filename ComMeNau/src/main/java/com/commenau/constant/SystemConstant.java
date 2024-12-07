@@ -25,5 +25,6 @@ public class SystemConstant {
     public static final String INVOICE_CANCEL = "Đã hủy";
     public static final short STOP_BUSINESS = 0;
     public static final short IN_BUSINESS = 1;
+    public static final String USER_KEYS = "user-keys";
     public static Map<String, Invoice> waitingPayments = new HashMap<>();
 }
