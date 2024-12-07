@@ -1,4 +1,3 @@
-//21130506_Nguyễn Ngọc Quý_DH21DTC
 package Algorithm;
 
 import java.io.File;
@@ -10,7 +9,6 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
 public class DigitalSignature {
-
     private PublicKey publicKey;
     private PrivateKey privateKey;
     public DigitalSignature() throws NoSuchAlgorithmException {
