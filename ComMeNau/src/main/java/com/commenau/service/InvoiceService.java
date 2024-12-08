@@ -122,20 +122,23 @@ public class InvoiceService {
         List<InvoiceDTO> re = new ArrayList<>();
         List<Invoice> listInvoiceOfUser = invoiceDAO.get10InvoiceById(userId);
         for (Invoice in : listInvoiceOfUser) {
-            double total = 0;
-            Invoice invoice = invoiceDAO.getInvoiceById(in.getId());
-            double shippingFee = (invoice.getShippingFee() == null) ? 0 : invoice.getShippingFee();
-            for (InvoiceItem invoiceItem : invoiceItemDAO.getAllInvoiceItemById(in.getId())) {
-                total += invoiceItem.getPrice() * invoiceItem.getQuantity();
+            try{
+                double total = 0;
+                Invoice invoice = invoiceDAO.getInvoiceById(in.getId());
+                double shippingFee = (invoice.getShippingFee() == null) ? 0 : invoice.getShippingFee();
+                for (InvoiceItem invoiceItem : invoiceItemDAO.getAllInvoiceItemById(in.getId())) {
+                    total += invoiceItem.getPrice() * invoiceItem.getQuantity();
+                }
+                InvoiceDTO invoicedto = InvoiceDTO.builder()
+                        .id(in.getId())
+                        .updatedAt(invoiceStatusDAO.getStatusByInvoice(in.getId()).getCreatedAt())
+                        .status(invoiceStatusDAO.getStatusByInvoice(in.getId()).getStatus())
+                        .total(total + shippingFee)
+                        .paymentMethod(invoice.getPaymentMethod())
+                        .build();
+                re.add(invoicedto);
             }
-            InvoiceDTO invoicedto = InvoiceDTO.builder()
-                    .id(in.getId())
-                    .updatedAt(invoiceStatusDAO.getStatusByInvoice(in.getId()).getCreatedAt())
-                    .status(invoiceStatusDAO.getStatusByInvoice(in.getId()).getStatus())
-                    .total(total + shippingFee)
-                    .paymentMethod(invoice.getPaymentMethod())
-                    .build();
-            re.add(invoicedto);
+            catch (NullPointerException ex){}
         }
         return re;
     }
@@ -183,8 +186,8 @@ public class InvoiceService {
         });
 
         // trả về thời gian dự kiến giao hàng
-        Timestamp timeDelivery = orderGHNService.createOrder(invoice, map);
-        invoiceDAO.updateTimeDelivery(timeDelivery, invoiceId);
+//        Timestamp timeDelivery = orderGHNService.createOrder(invoice, map);
+//        invoiceDAO.updateTimeDelivery(timeDelivery, invoiceId);
         //delete cart items of user
         cartDAO.deleteAll(invoice.getUserId());
 

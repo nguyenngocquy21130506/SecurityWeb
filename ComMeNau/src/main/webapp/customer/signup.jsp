@@ -107,9 +107,9 @@
                                            value="ĐĂNG KÝ"/>
                                     <lable class="error-total"></lable>
                                 </div>
+                            </form>
                         </div>
                         <a class="gl-link" href="<c:url value="/home"/>">Trở lại trang chủ</a>
-                        </form>
                     </div>
                 </div>
             </div>
@@ -176,14 +176,14 @@
             } else {
                 switch (name) {
                     case 'firstName' :
-                        if (/\d/.test(value) || (/\s+/).test(value)) {
-                            errorLabel.textContent = 'Tên không hợp lệ';
-                        }
-                        break;
-                    case 'lastName' :
                         if (/\d/.test(value)) {
                             // /\d/ + /\s+/
                             errorLabel.textContent = 'Họ không hợp lệ';
+                        }
+                        break;
+                    case 'lastName' :
+                        if (/\d/.test(value) || (/\s+/).test(value)) {
+                            errorLabel.textContent = 'Tên không hợp lệ';
                         }
                         break;
                     case 'email' :
@@ -212,7 +212,7 @@
                         if (!(/^.{8,}$/).test(value)) {
                             errorLabel.textContent = 'Password phải có tối thiểu 8 ký tự';
                         } else if (!(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).+$/).test(value)) {
-                            errorLabel.textContent = 'Password phải có ký tự hoa, ký tự đặc biệt và số';
+                            errorLabel.textContent = 'Password phải có ký tự hoa, ký tự thường, ký tự đặc biệt và số';
                         }
                         break;
                     case 'confirmPassword' :

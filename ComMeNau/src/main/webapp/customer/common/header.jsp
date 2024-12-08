@@ -78,7 +78,7 @@
                                     ${auth.firstName}
                                 </c:if>
                             </a>
-                            <ul class="sub-menu" style="width:120px">
+                            <ul class="sub-menu" style="width:120px;top: 90%;">
                                 <c:if test="${auth==null}">
                                     <li>
                                         <a href="<c:url value="/signup"/>"><i class="fa-solid fa-user-plus m-r-6"></i>

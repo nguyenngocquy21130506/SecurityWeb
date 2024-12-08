@@ -19,6 +19,7 @@ public class SystemConstant {
     public static final String PRE_PAGE = "previousPage";
     public static final String INVOICE_PROCESSING = "Đang xử lý";
     public static final String INVOICE_SHIPPING = "Đang vận chuyển";
+    public static final String INVOICE_CHECKOUT = "Đang kiểm tra";
     public static final String INVOICE_SHIPPED = "Đã giao";
 
     public static final String INVOICE_ACCEPTED = "Đã nhận";

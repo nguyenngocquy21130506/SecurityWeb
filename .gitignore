@@ -34,3 +34,4 @@ dependency-reduced-pom.xml
 # Tomcat
 *.smarttomcat/
 
+ComMeNau/src/main/resources/DB.properties

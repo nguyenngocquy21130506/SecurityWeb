@@ -26,6 +26,5 @@ public class FilterUpdate implements Filter {
         }
         Iterator<String> it = ((HttpServletRequest) request).getParameterNames().asIterator();
         chain.doFilter(request, response);
-
     }
 }
