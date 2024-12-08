@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet("/payments")
-public class CheckoutController extends HttpServlet {
+public class PaymentController extends HttpServlet {
     @Inject
     private CartService cartService;
     @Inject
@@ -139,7 +139,11 @@ public class CheckoutController extends HttpServlet {
         if (!hasError) {
             if (user != null) {
                 invoice.setUserId(user.getId());
+
+                //save invoice to database
                 isSuccess = invoiceService.saveInvoice(invoice);
+
+                //use logService to save invoice information to database
                 if(isSuccess){
                     InvoiceDTO invoiceDTO = invoiceService.getInvoiceDTOById(invoice.getId());
                     logService.save(LogLevel.INFO, "success", invoiceDTO);
