@@ -255,6 +255,7 @@ li.has-dropdown > ul {
     transition: all 0.3s ease;
     top: 120%;
     display: none;
+    left: 0;
 }
 
 li.has-dropdown > ul > li > a {
@@ -265,10 +266,10 @@ li.has-dropdown > ul > li > a {
     font-weight: 600;
 }
 
-li.has-dropdown:hover ul.sub-menu {
+li.has-dropdown:hover ul{
     display: block;
     right: -68px;
-    top: 80px;
+    top: 1%;
 }
 
 .ah-list--design1 li a:hover,
