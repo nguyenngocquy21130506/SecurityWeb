@@ -117,7 +117,7 @@ public class ProductDAO {
 
     public List<Product> getNewRelativeProductView() {
         return ConnectionPool.getConnection().withHandle(n -> {
-            return n.createQuery("select id, categoryId ,description , name , price , discount from products where status = 1 and categoryId = 1 order by createdAt desc limit 8").mapToBean(Product.class).stream().toList();
+            return n.createQuery("select id, categoryId ,description , name , price , discount from products where status = 1 and categoryId = 1 and available >= 0 order by createdAt desc limit 8").mapToBean(Product.class).stream().toList();
         });
     }
 

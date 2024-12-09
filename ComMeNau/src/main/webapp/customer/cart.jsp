@@ -449,60 +449,6 @@
                 }
             });
         });
-        <%--$('.btn-add-cart').on('click', function () {--%>
-        <%--    var inputData = {};--%>
-        <%--    inputData['productId'] = $(this).data('input-id');--%>
-        <%--    console.log(inputData);--%>
-        <%--    // using Ajax to send data to server--%>
-        <%--    $.ajax({--%>
-        <%--        type: "POST",--%>
-        <%--        url: "<c:url value="/gio-hang"/>",--%>
-        <%--        data: JSON.stringify(inputData),--%>
-        <%--        contentType: "application/json; charset=utf-8",--%>
-        <%--        dataType: "json",--%>
-        <%--        success: function (response) {--%>
-        <%--            &lt;%&ndash;window.location.href = "<c:url value="/gio-hang"/>";&ndash;%&gt;--%>
-        <%--            Swal.fire({--%>
-        <%--                icon: "success",--%>
-        <%--                title: "Đã thêm thành công",--%>
-        <%--                toast: true,--%>
-        <%--                position: "top-end",--%>
-        <%--                showConfirmButton: false,--%>
-        <%--                timer: 1000,--%>
-        <%--                timerProgressBar: true,--%>
-        <%--                didOpen: (toast) => {--%>
-        <%--                    toast.onmouseenter = Swal.stopTimer;--%>
-        <%--                    toast.onmouseleave = Swal.resumeTimer;--%>
-        <%--                }--%>
-        <%--            });--%>
-
-        <%--        },--%>
-        <%--        error: function (error) {--%>
-        <%--            console.log("Đã xảy ra lỗi trong quá trình gửi dữ liệu: " + error);--%>
-        <%--            &lt;%&ndash;window.location.href = "<c:url value="/gio-hang"/>";&ndash;%&gt;--%>
-        <%--        }--%>
-        <%--    });--%>
-        <%--});--%>
-        for (let i = 0; i < ${requestScope.remove}.length; i++) {
-            Swal.fire({
-                icon: "warning",
-                title: "Xóa sản phẩm  " + ${requestScope.remove}[i].product.productName + " ra khỏi giỏ hàng vì hết hàng",
-                toast: true,
-                position: "top-end",
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                    toast.onmouseenter = Swal.stopTimer;
-                    toast.onmouseleave = Swal.resumeTimer;
-                }
-            });
-        }
-        // let infBoard = document.querySelector(".opacity_bgk0");
-        // let infBtn = document.querySelector(".u-img-fluid"); // picture and name product
-        // infBtn.onclick = function () {
-        //     infBoard.style.display = "block";
-        // };
     });
 
 </script>
