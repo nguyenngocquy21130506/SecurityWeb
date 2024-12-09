@@ -18,8 +18,8 @@ import java.util.regex.Pattern;
 @WebFilter(value = {"/login", "/payments", "/invoice-details", "/change-profile",
         "/change-password", "/wishlist", "/blog-detail", "/admin/updateUser",
         "/admin/invoiceDetail", "/admin/blog-detail", "/admin/voucher-detail",
-        "/admin/products", "/admin/product-detail","/message/*","/contacts","/admin/categories"
-        })
+        "/admin/products", "/admin/product-detail", "/message/*", "/contacts", "/admin/categories"
+})
 public class RequestFilter implements Filter {
 
     private static ThreadLocal<HttpServletRequest> currentRequest = new ThreadLocal<>();

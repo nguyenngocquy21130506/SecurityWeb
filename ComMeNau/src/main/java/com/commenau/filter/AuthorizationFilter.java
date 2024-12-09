@@ -15,7 +15,7 @@ public class AuthorizationFilter implements Filter {
     private static String[] urls;
 
     static {
-        urls = new String[]{"/change-profile", "/profile", "/change-password", "/invoices", "/invoice-details", "/wishlist"};
+        urls = new String[]{"/change-profile", "/profile", "/change-password", "/invoices", "/invoice-details", "/wishlist", "/keypair-manager"};
     }
 
     @Inject

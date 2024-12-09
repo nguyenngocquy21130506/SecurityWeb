@@ -1,3 +1,5 @@
+<%@ page import="com.commenau.encryptMode.RSA" %>
+<%@ page import="java.util.Base64" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
@@ -14,7 +16,19 @@
     <link href="images/favicon.png" rel="shortcut icon">
     <title>Quản lý bảo mật</title>
     <link rel="stylesheet" href="<c:url value="/font-awesome/fontawesome-free-6.4.2-web/css/all.min.css"/>">
-    <link rel="stylesheet" href="<c:url value="/boostrap/bootstrap-5.3.2-dist/css/bootstrap.min.css"/>">
+    <%--    <link rel="stylesheet" href="<c:url value="/boostrap/bootstrap-5.3.2-dist/css/bootstrap.min.css"/>">--%>
+    <%--    <link rel="stylesheet" href="<c:url value="/boostrap/bootstrap-5.3.2-dist/js/bootstrap.bundle.js"/>">--%>
+    <%--    <link rel="stylesheet" href="<c:url value="/boostrap/bootstrap-5.3.2-dist/js/bootstrap.min.js"/>">--%>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+            integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+            crossorigin="anonymous"></script>
+
     <link rel="stylesheet" href="<c:url value="/customer/css/common.css"/>">
     <link rel="stylesheet" href="<c:url value="/customer/css/dash.css"/>">
     <link rel="stylesheet" href="<c:url value="/customer/css/dash-manage-order.css"/>">
@@ -36,7 +50,6 @@
     <jsp:include page="common/chat.jsp"></jsp:include>
     <!--====== End - Main Header ======-->
 
-
     <!--====== App Content ======-->
     <div class="container-content mt-5">
         <div class="app-content">
@@ -56,20 +69,10 @@
 
                                             <span class="dash__text u-s-m-b-16">Xin Chào, ${auth.fullName()}</span>
                                             <ul class="dash__f-list">
-                                                <li>
-                                                    <a href="<c:url value="/profile"/>">Thông tin tài
-                                                        khoản</a>
-                                                </li>
-
-                                                </li>
-                                                <li>
-                                                    <a href="<c:url value="/invoices"/>">Đơn đặt hàng</a>
-                                                </li>
-                                                <li>
-                                                    <a class="dash-active" href="<c:url value="/keypair-manager"/>">Quản
-                                                        lý bảo mật</a>
-                                                </li>
-
+                                                <li><a href="<c:url value="/profile"/>">Thông tin tài khoản</a></li>
+                                                <li><a href="<c:url value="/invoices"/>">Đơn đặt hàng</a></li>
+                                                <li><a class="dash-active" href="<c:url value="/keypair-manager"/>">Quản
+                                                    lý khoá bảo mật</a></li>
                                             </ul>
                                         </div>
                                     </div>
@@ -78,16 +81,34 @@
                                 <div class="col-lg-9">
                                     <div class="dash__box dash__box--shadow dash__box--radius dash__box--bg-white">
                                         <div id="dash-content" class="dash__pad-2">
-                                            <h1 class="dash__h1 u-s-m-b-14">Thay đổi mật khẩu</h1>
+                                            <h1 class="dash__h1 u-s-m-b-14">Quản lý khoá bảo mật</h1>
+
+                                            <%-- Button groups --%>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <button id="btn_keypair_create" class="btn btn-primary"
+                                                            type="button" data-bs-toggle="modal"
+                                                            data-bs-target="#modal_keypair_create">Tạo keypair
+                                                    </button>
+                                                    <button id="btn_keypair_load" class="btn btn-outline-primary"
+                                                            type="button" data-bs-toggle="tooltip"
+                                                            data-bs-placement="top" data-bs-title="Tooltip on top">Tải
+                                                        key
+                                                    </button>
+                                                </div>
+                                                <button id="btn_keypair_report" class="btn btn-danger" type="button"
+                                                        data-bs-toggle="tooltip" data-bs-placement="top"
+                                                        data-bs-title="Tooltip on top">Báo cáo
+                                                </button>
+                                            </div>
 
                                             <table id="table_id" class="table table-striped">
                                                 <thead>
                                                 <tr>
-                                                    <th scope="col">#</th>
-                                                    <th scope="col"
-                                                        data-bs-toggle="tooltip" data-bs-title="Default tooltip">First</th>
-                                                    <th scope="col">Last</th>
-                                                    <th scope="col">Handle</th>
+                                                    <th scope="col">Tên</th>
+                                                    <th scope="col">Hạn sử dụng</th>
+                                                    <th scope="col">Thời gian tạo</th>
+                                                    <th scope="col">Trạng thái</th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
@@ -105,7 +126,8 @@
                                                 </tr>
                                                 <tr>
                                                     <th scope="row">3</th>
-                                                    <td colspan="2">Larry the Bird</td>
+                                                    <td>Larry the Bird</td>
+                                                    <td>Larry the Bird</td>
                                                     <td>@twitter</td>
                                                 </tr>
                                                 </tbody>
@@ -124,7 +146,6 @@
     </div>
     <!--====== End - App Content ======-->
 
-
     <!--====== Main Footer ======-->
     <%@include file="/customer/common/footer.jsp" %>
 </div>
@@ -135,98 +156,27 @@
 <script>
     $(document).ready(function () {
 
-
+        // Them Datatable vao table#table_id
         $('#table_id').DataTable();
 
-        <%--var options = {--%>
-        <%--    // set a custom rule--%>
-        <%--    rules: {--%>
-        <%--        confirmed: function (value) {--%>
-        <%--            var passwordValue = document.querySelector('input[name="newPassword"]').value;--%>
-        <%--            // Check if confirmPassword matches the password--%>
-        <%--            return (value === passwordValue);--%>
-        <%--        }--%>
-        <%--    },--%>
-        <%--    messages: {--%>
-        <%--        vi: {--%>
-        <%--            confirmed: {--%>
-        <%--                empty: 'Vui lòng nhập trường này',--%>
-        <%--                incorrect: 'Mật khẩu không khớp. Vui lòng nhập lại.'--%>
-        <%--            }--%>
-        <%--        }--%>
-        <%--    }--%>
-        <%--};--%>
-        <%--// Go to validation--%>
-        <%--let validate = false;--%>
-        <%--new Validator(document.querySelector('#changePassForm'), function (err, res) {--%>
-        <%--    validate = res;--%>
-        <%--}, options);--%>
+        $('#btn_keypair_create').on('click', async function () {
+            console.log(`Button Create KeyPair is clicked`);
+            const userConfirm = confirm("Xác nhận tạo keypair?");
+            if (userConfirm) {
+                createKeyPair();
+            }
+        });
 
-        <%--$('#changePassForm').on('submit', function (event) {--%>
-        <%--    event.preventDefault(); // Ngăn chặn hành động mặc định của form--%>
+        $('#btn_keypair_load').on('click', function () {
+            getPrivateKeyBinary()
+        })
 
-        <%--    // Kiểm tra xác thực trước khi gửi AJAX request--%>
-        <%--    if (validate === true) {--%>
-        <%--        var newPassword = $('input[name="newPassword"]').val();--%>
-        <%--        var confirmPassword = $('input[name="confirmPassword"]').val();--%>
-        <%--        var currentPassword = $('input[name="currentPassword"]').val();--%>
-
-        <%--        const encrypt = new JSEncrypt();--%>
-        <%--        encrypt.setPrivateKey('')--%>
-
-        <%--        var formData = {--%>
-        <%--            newPassword: encrypt.encrypt(newPassword),--%>
-        <%--            confirmPassword: encrypt.encrypt(confirmPassword),--%>
-        <%--            currentPassword: encrypt.encrypt(currentPassword)--%>
-        <%--        };--%>
-
-        <%--        // Gửi AJAX request--%>
-        <%--        $.ajax({--%>
-        <%--            type: 'POST',--%>
-        <%--            url: "<c:url value="/change-password"/>",--%>
-        <%--            data: formData,--%>
-        <%--            success: function () {--%>
-        <%--                Swal.fire({--%>
-        <%--                    icon: "success",--%>
-        <%--                    title: "Thay đổi thành công",--%>
-        <%--                    toast: true,--%>
-        <%--                    position: "top-end",--%>
-        <%--                    showConfirmButton: false,--%>
-        <%--                    timer: 700,--%>
-        <%--                    timerProgressBar: true,--%>
-        <%--                    didOpen: (toast) => {--%>
-        <%--                        toast.onmouseenter = Swal.stopTimer;--%>
-        <%--                        toast.onmouseleave = Swal.resumeTimer;--%>
-        <%--                    }--%>
-        <%--                });--%>
-        <%--                setTimeout(function () {--%>
-        <%--                    window.location.href = "<c:url value="/profile"/>";--%>
-        <%--                }, 700);--%>
-
-        <%--            },--%>
-        <%--            error: function () {--%>
-        <%--                Swal.fire({--%>
-        <%--                    icon: "warning",--%>
-        <%--                    title: "Thay đổi không thành công",--%>
-        <%--                    toast: true,--%>
-        <%--                    position: "top-end",--%>
-        <%--                    showConfirmButton: false,--%>
-        <%--                    timer: 1000,--%>
-        <%--                    timerProgressBar: true,--%>
-        <%--                    didOpen: (toast) => {--%>
-        <%--                        toast.onmouseenter = Swal.stopTimer;--%>
-        <%--                        toast.onmouseleave = Swal.resumeTimer;--%>
-        <%--                    }--%>
-        <%--                });--%>
-        <%--            }--%>
-        <%--        });--%>
-        <%--    } else {--%>
-        <%--        // Xử lý khi form chưa được xác thực--%>
-        <%--        console.log("form error")--%>
-        <%--    }--%>
-        <%--});--%>
+        $('#btn_keypair_report').on('click', function () {
+        })
     })
 </script>
+<%-- Load Javascript for this file--%>
+<script src="<c:url value="/customer/js/keypair-manager.js"/>"></script>
 <%--CryptoJS--%>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
 <%--JSEncrypt--%>
@@ -236,8 +186,12 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css"/>
 <%--Bootstrap toggle--%>
 <script>
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    const myModal = document.getElementById('myModal')
+    const myInput = document.getElementById('myInput')
+
+    myModal.addEventListener('shown.bs.modal', () => {
+        myInput.focus()
+    })
 </script>
 </body>
 

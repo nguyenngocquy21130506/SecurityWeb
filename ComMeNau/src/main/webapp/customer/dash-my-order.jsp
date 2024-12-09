@@ -44,17 +44,10 @@
 
                                     <span class="dash__text u-s-m-b-16">Xin Chào, ${auth.fullName()}</span>
                                     <ul class="dash__f-list">
-                                        <li>
-                                            <a href="<c:url value="/profile"/>">Thông tin tài
-                                                khoản</a>
-                                        </li>
-
-                                        </li>
-                                        <li>
-                                            <a class="dash-active" href="<c:url value="/invoices"/>">Đơn đặt
-                                                hàng</a>
-                                        </li>
-
+                                        <li><a href="<c:url value="/profile"/>">Thông tin tài khoản</a></li>
+                                        <li><a href="<c:url value="/invoices"/>">Đơn đặt hàng</a></li>
+                                        <li><a class="dash-active" href="<c:url value="/keypair-manager"/>">Quản
+                                            lý khoá bảo mật</a></li>
                                     </ul>
                                 </div>
                             </div>
